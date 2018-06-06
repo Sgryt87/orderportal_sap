@@ -18,12 +18,15 @@
                 <input type="text" class="form-control" v-model="order.nsn" id="nsn" placeholder=""
                        @blur="fetch_address_by_nsn(order.nsn)">
             </div>
-            <!--<div v-if="add && address.length" class="form-group">-->
-            <!--<label for="">Address</label>-->
-            <!--<textarea class="form-control" readonly >-->
-            <!--&lt;!&ndash;<span v-for="add in address">{{add}}</span>&ndash;&gt;-->
-            <!--</textarea>-->
-            <!--</div>-->
+            <div v-if="order.nsn" class="form-group">
+                <label for="address">Store Address</label>
+                <textarea class="form-control" name="" id="address" cols="30" rows="4" readonly>
+                    {{address.store_address}}
+                    {{address.store_city}}
+                    {{address.store_state}}
+                    {{address.store_zip}}
+                </textarea>
+            </div>
             <div class="form-group">
                 <label for="presell">Presells</label>
                 <select class="form-control" v-model="order.presell" id="presell">
@@ -80,6 +83,7 @@
         data: function () {
             return {
                 order: {},
+                nsn: '',
                 address: [],
                 presells: [],
                 order_boards: [],
@@ -137,16 +141,18 @@
                     })
             },
             fetch_address_by_nsn(nsn) {
-                console.log(parseInt(nsn));
-                axios.post(`api/orders-nsn`, parseInt(nsn))
-                    .then(response => {
-                        // this.notifications.push('Address');
-                        // this.address = response.
-                        console.log('address', response.data);
-                    })
-                    .catch(e => {
-                        this.notifications.push(e);
-                    })
+                if (nsn > 0) {
+
+                    axios.post(`api/orders-nsn`, nsn)
+                        .then(response => {
+                            // this.notifications.push('Address');
+                            this.address = response.data;
+                            console.log('address', response.data);
+                        })
+                        .catch(e => {
+                            this.notifications.push(e);
+                        })
+                }
             },
             create_order() {
                 axios.post(`api/orders`, this.order)

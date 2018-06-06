@@ -15,6 +15,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <!--<th>Store Address</th>-->
                     <th>NSN</th>
                     <th>Presells</th>
                     <th>Order Boards</th>
@@ -29,6 +30,13 @@
                     <td>{{index + 1}}</td>
                     <td>
                         {{order.nsn}}
+                    </td>
+                    <td v-if="order.nsn">
+                        <!--{{fetch_address_by_nsn(order.nsn)}}-->
+                        <!--{{address.store_address}}-->
+                        <!--{{address.store_city}}-->
+                        <!--{{address.store_state}}-->
+                        <!--{{address.store_zip}}-->
                     </td>
                     <td>
                         {{order.presell}}
@@ -73,6 +81,7 @@
             return {
                 orders: [],
                 notifications: [],
+                address: [],
                 doc: null,
                 dropzoneOptions: {
                     url: 'null',
@@ -130,6 +139,7 @@
                                 }
                                 axios.post(`api/orders-validate-bulk`, csvJsonToDBArray)
                                     .then(response => {
+                                        console.log('DATA !!!', response);
                                         that.orders = response.data;
                                         console.log('ORDERS !!!', that.orders);
                                     })
@@ -159,9 +169,23 @@
                     })
                     .catch(e => {
                         this.notifications.push(e);
-                        console.log("err",e);
+                        console.log("err", e);
                     })
             },
+            fetch_address_by_nsn(nsn) {
+                if (nsn > 0) {
+
+                    axios.post(`api/orders-nsn`, nsn)
+                        .then(response => {
+                            // this.notifications.push('Address');
+                            this.address = response.data;
+                            console.log('address', response.data);
+                        })
+                        .catch(e => {
+                            this.notifications.push(e);
+                        })
+                }
+            }
         },
     }
 

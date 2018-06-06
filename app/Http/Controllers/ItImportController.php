@@ -78,20 +78,14 @@ class ItImportController extends Controller
 
     public function showByNSN(Request $request)
     {
-//        $data = $request->all();
-//        $arr  = [];
-//        for ($i = 0; $i < count($data); $i++) {
-//            $arr = $data[$i];
-//        }
-//
-//        return $arr;
+        $data = array_keys($request->all());
+
+            return $address = ItImport::where('nsn', $data[0])->first();
 
 
-        $address = ItImport::where('nsn', 80)->first();
-
-        return response([
-            'data' => new ItImportResource($address)
-        ], Response::HTTP_CREATED);
+//        return response([
+//            'data' => new ItImportResource($address)
+//        ], Response::HTTP_CREATED);
     }
 
     /**

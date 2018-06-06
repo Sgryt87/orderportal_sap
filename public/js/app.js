@@ -70882,6 +70882,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -70890,6 +70893,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             order: {},
+            nsn: '',
             address: [],
             presells: [],
             order_boards: [],
@@ -70950,14 +70954,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetch_address_by_nsn: function fetch_address_by_nsn(nsn) {
             var _this5 = this;
 
-            console.log(parseInt(nsn));
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-nsn', parseInt(nsn)).then(function (response) {
-                // this.notifications.push('Address');
-                // this.address = response.
-                console.log('address', response.data);
-            }).catch(function (e) {
-                _this5.notifications.push(e);
-            });
+            if (nsn > 0) {
+
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-nsn', nsn).then(function (response) {
+                    // this.notifications.push('Address');
+                    _this5.address = response.data;
+                    console.log('address', response.data);
+                }).catch(function (e) {
+                    _this5.notifications.push(e);
+                });
+            }
         },
         create_order: function create_order() {
             var _this6 = this;
@@ -71037,6 +71043,41 @@ var render = function() {
             }
           })
         ]),
+        _vm._v(" "),
+        _vm.order.nsn
+          ? _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "address" } }, [
+                _vm._v("Store Address")
+              ]),
+              _vm._v(" "),
+              _c(
+                "textarea",
+                {
+                  staticClass: "form-control",
+                  attrs: {
+                    name: "",
+                    id: "address",
+                    cols: "30",
+                    rows: "4",
+                    readonly: ""
+                  }
+                },
+                [
+                  _vm._v(
+                    "                " +
+                      _vm._s(_vm.address.store_address) +
+                      "\n                " +
+                      _vm._s(_vm.address.store_city) +
+                      "\n                " +
+                      _vm._s(_vm.address.store_state) +
+                      "\n                " +
+                      _vm._s(_vm.address.store_zip) +
+                      "\n            "
+                  )
+                ]
+              )
+            ])
+          : _vm._e(),
         _vm._v(" "),
         _c("div", { staticClass: "form-group" }, [
           _c("label", { attrs: { for: "presell" } }, [_vm._v("Presells")]),
@@ -71386,7 +71427,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -71465,6 +71506,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -71482,6 +71531,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             orders: [],
             notifications: [],
+            address: [],
             doc: null,
             dropzoneOptions: {
                 url: 'null',
@@ -71538,6 +71588,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                                 csvJsonToDBArray.push(that.csvJsonToApiJson(results.data[i]));
                             }
                             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-validate-bulk', csvJsonToDBArray).then(function (response) {
+                                console.log('DATA !!!', response);
                                 that.orders = response.data;
                                 console.log('ORDERS !!!', that.orders);
                             }).catch(function (e) {
@@ -71566,6 +71617,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.notifications.push(e);
                 console.log("err", e);
             });
+        },
+        fetch_address_by_nsn: function fetch_address_by_nsn(nsn) {
+            var _this2 = this;
+
+            if (nsn > 0) {
+
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-nsn', nsn).then(function (response) {
+                    // this.notifications.push('Address');
+                    _this2.address = response.data;
+                    console.log('address', response.data);
+                }).catch(function (e) {
+                    _this2.notifications.push(e);
+                });
+            }
         }
     }
 });
@@ -73932,6 +73997,8 @@ var render = function() {
                             "\n                "
                         )
                       ]),
+                      _vm._v(" "),
+                      order.nsn ? _c("td") : _vm._e(),
                       _vm._v(" "),
                       _c("td", [
                         _vm._v(
