@@ -81,17 +81,17 @@
                                 </option>
                             </select>
                         </div>
-                        <div v-else>
+                        <div>
                             {{order.height_requirement.value}}
                         </div>
                     </td>
                     <td>
-                        <div v-if="order.id === editId">
-                            <Datepicker v-model="order.requested_enclosure_delivery_date"
-                                        :format="customFormatter"></Datepicker>
-                            <!--<v-date-picker></v-date-picker>-->
-                        </div>
-                        <div v-else>
+                        <!--<div v-if="order.id === editId">-->
+                        <!--<Datepicker v-model="order.requested_enclosure_delivery_date"-->
+                        <!--:format="customFormatter"></Datepicker>-->
+                        <!--&lt;!&ndash;<v-date-picker></v-date-picker>&ndash;&gt;-->
+                        <!--</div>-->
+                        <div>
                             {{ order.requested_enclosure_delivery_date }}
                         </div>
                     </td>
@@ -139,13 +139,9 @@
 
 <script>
     import axios from 'axios';
-    import moment from 'moment';
-    import Datepicker from 'vuejs-datepicker';
 
     export default {
-        components: {
-            Datepicker
-        },
+        components: {},
         name: "admin-orders-history",
         data: function () {
             return {
@@ -282,7 +278,6 @@
                 this.editId = null;
                 this.tempOrder = null;
             }
-
         }
     }
 </script>

@@ -29,10 +29,10 @@ class OrderRequest extends FormRequest
             'order_board.id'                    => 'required|integer',
             'protective_cover.id'               => 'required|integer',
             'height_requirement.id'             => 'required|integer',
-            'delivery_note'                     => 'required|string|max:255',
-            'note'                              => 'required|string|max:255',
+            'delivery_note'                     => 'nullable|string|max:255',
+            'note'                              => 'nullable|string|max:255',
             'requested_enclosure_delivery_date' => 'required|date',
-//            'ship_date'                         => 'date',   todo FIX date format
+            'ship_date'                         => 'nullable|date',   //todo FIX date format
         ];
     }
 }

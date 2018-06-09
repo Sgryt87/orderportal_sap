@@ -18,7 +18,7 @@
                 <input type="text" class="form-control" v-model="order.nsn" id="nsn" placeholder=""
                        @blur="fetch_address_by_nsn(order.nsn)">
             </div>
-            <div v-if="order.nsn" class="form-group">
+            <div v-if="address" class="form-group">
                 <label for="address">Store Address</label>
                 <textarea class="form-control" name="" id="address" cols="30" rows="4" readonly>
                     {{address.store_address}}
@@ -61,8 +61,13 @@
             </div>
             <div class="form-group">
                 <label>Requested Enclosure Delivery Date</label>
-                <input class="form-control" type="text" v-model="order.requested_enclosure_delivery_date"
-                       value="05-05-2015">
+                <!--<input class="form-control" type="text" v-model="order.requested_enclosure_delivery_date"-->
+                <!--value="05-05-2015">-->
+                <v-date-picker
+                        mode='range'
+                        v-model='selectedDate'
+                        show-caps>
+                </v-date-picker>
             </div>
             <div class="form-group">
                 <label for="">Delivery Notes</label>
@@ -78,18 +83,25 @@
 <script>
     import axios from 'axios';
 
+
     export default {
-        components: {},
+        components: {
+
+        },
         data: function () {
             return {
                 order: {},
                 nsn: '',
-                address: [],
+                address: null,
                 presells: [],
                 order_boards: [],
                 protective_covers: [],
                 height_requirements: [],
-                notifications: []
+                notifications: [],
+                selectedDate: {
+                    start: new Date(2018, 0, 9),
+                    end: new Date(2018, 0, 18)
+                }
             }
         },
 
@@ -142,12 +154,11 @@
             },
             fetch_address_by_nsn(nsn) {
                 if (nsn > 0) {
-
-                    axios.post(`api/orders-nsn`, nsn)
+                    axios.post(`api/orders-nsn`, {nsn})
                         .then(response => {
                             // this.notifications.push('Address');
-                            this.address = response.data;
-                            console.log('address', response.data);
+                            this.address = response.data.data;
+                            console.log('address', response.data.data);
                         })
                         .catch(e => {
                             this.notifications.push(e);

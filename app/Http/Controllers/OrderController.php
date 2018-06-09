@@ -28,8 +28,14 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return new OrderCollection(Order::with(['presell', 'protective_cover', 'order_board', 'height_requirement'])
-                                        ->get());
+        return response([
+            'data' => new OrderCollection(Order::with([
+                'presell',
+                'protective_cover',
+                'order_board',
+                'height_requirement'
+            ])->get())
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -77,41 +83,39 @@ class OrderController extends Controller
 
         $data = $request->all();
 
-        return $data;
+//        return print_r($data);
+        $data             = $data['data'];
         $arrOrder         = [];
         $arrOrderResource = [];
-        foreach ($data as $row) {
-            $requested_enclosure_delivery_date           = $row['requested_enclosure_delivery_date'];
+        for ($i = 0; $i < count($data); $i++) {
+            $requested_enclosure_delivery_date           = $data[$i]['requested_enclosure_delivery_date'];
             $requested_enclosure_delivery_date_converted = date('Y-m-d', strtotime($requested_enclosure_delivery_date));
 
-            $order = new Order();
+            $order              = [];
+            $presell            = Presell::where('value', $data[$i]['presell'])->first();
+            $order_board        = OrderBoard::where('value', $data[$i]['order_board'])->first();
+            $protective_cover   = ProtectiveCover::where('value', $data[$i]['protective_cover'])->first();
+            $height_requirement = HeightRequirement::where('value', $data[$i]['height_requirement'])->first();
 
-            $order->nsn                               = $request->input('nsn');
-            $order->presell_id                        = $request->input('presell.id');
-            $order->order_board_id                    = $request->input('order_board.id');
-            $order->protective_cover_id               = $request->input('protective_cover.id');
-            $order->height_requirement_id             = $request->input('height_requirement.id');
-            $order->delivery_note                     = $request->input('delivery_note');
-            $order->note                              = $request->input('note');
-            $order->requested_enclosure_delivery_date = $requested_enclosure_delivery_date_converted;
-            $order->ship_date                         = $request->input('ship_date');
 
-//            $order->nsn                               = $row['nsn'];
-//            $order->presell_id                        = $row['presell']['id'];
-//            $order->order_board_id                    = $row['order_board']['id'];
-//            $order->protective_cover_id               = $row['protective_cover']['id'];
-//            $order->height_requirement_id             = $row['height_requirement']['id'];
-//            $order->delivery_note                     = $row['delivery_note'];
-//            $order->note                              = $row['note'];
-            $order->requested_enclosure_delivery_date = $requested_enclosure_delivery_date_converted;
+            $order['nsn']                               = $data[$i]['nsn'];
+            $order['presell_id']                        = $presell->id;
+            $order['order_board_id']                    = $order_board->id;
+            $order['protective_cover_id']               = $protective_cover->id;
+            $order['height_requirement_id']             = $height_requirement->id;
+            $order['delivery_note']                     = $data[$i]['delivery_note'];
+            $order['note']                              = $data[$i]['note'];
+            $order['requested_enclosure_delivery_date'] = $requested_enclosure_delivery_date_converted;
+
             array_push($arrOrder, $order);
             array_push($arrOrderResource, new OrderResource($order));
         }
 
+        Order::insert($arrOrder);
 //        DB::table('orders')->insert($arrOrder);
-
+//        return $arrOrder;
         return response([
-            'data' => new OrderResource($arrOrder)
+            'data' => $arrOrder
         ], Response::HTTP_CREATED);
     }
 
@@ -126,7 +130,9 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
 
-        return new OrderResource($order);
+        return response([
+            'data' => new OrderResource($order)
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -167,7 +173,9 @@ class OrderController extends Controller
         $order->ship_date                         = $request->input('ship_date');
         $order->save();
 
-        return new OrderResource($order);
+        return response([
+            'data' => new OrderResource($order)
+        ], Response::HTTP_CREATED);
     }
 
     //VALIDATE
@@ -194,7 +202,7 @@ class OrderController extends Controller
             }
 
             if ( ! Presell::where('value', $data[$i]['presell'])->first()) {
-                array_push($data[$i]->errors,
+                array_push($data[$i]['errors'],
                     'Presells value is not valid.');
             }
 
@@ -230,9 +238,9 @@ class OrderController extends Controller
 
         }
 
-//        DB::table('orders')->insert($arrOrder);
-
-        return $data;
+        return response([
+            'data' => $data
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -249,6 +257,8 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->delete();
 
-        return response()->json(null, 204);
+        return response([
+            'data' => null
+        ], Response::HTTP_NO_CONTENT);
     }
 }

@@ -19,6 +19,11 @@ import AdminOrdersHistory from './components/admin/Orders/AdminOrdersHistory';
 import AdminItImport from './components/admin/AdminItImport';
 import AdminItExport from './components/admin/AdminItExport';
 
+import VCalendar from 'v-calendar';
+import 'v-calendar/lib/v-calendar.min.css';
+
+
+
 
 
 /**
@@ -30,6 +35,9 @@ import AdminItExport from './components/admin/AdminItExport';
 
 
 Vue.use(VueRouter);
+Vue.use(VCalendar, {firstDayOfWeek: 2});
+
+
 // Vue.use(require('vue-moment'));
 // 0. If using a module system (e.g. via vue-cli), import Vue and VueRouter
 // and then call `Vue.use(VueRouter)`.
@@ -65,6 +73,7 @@ const app = new Vue({
     el: '#app',
     router,
     components: {
+        VCalendar,
         AdminHeader,
         AdminNavbar,
         AdminFooter

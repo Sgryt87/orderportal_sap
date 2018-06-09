@@ -36,6 +36,7 @@
             console.log('L DAT', data);
 
             if (columnHeaders.length != Object.keys(data[0]).length) {
+                console.log(columnHeaders.length, '  ', Object.keys(data[0]).length);
                 this.validationErrors.push(`File format is incorrect. Please verify you are using the latest upload template.`);
                 return false;
             }

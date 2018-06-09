@@ -19,7 +19,7 @@ class ItImportController extends Controller
      */
     public function index()
     {
-        $it_import = ItImport::paginate(10);
+        $it_import = ItImport::orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json($it_import);
     }
@@ -78,14 +78,12 @@ class ItImportController extends Controller
 
     public function showByNSN(Request $request)
     {
-        $data = array_keys($request->all());
-
-            return $address = ItImport::where('nsn', $data[0])->first();
+        $address = ItImport::where('nsn', $request->input('nsn'))->first();
 
 
-//        return response([
-//            'data' => new ItImportResource($address)
-//        ], Response::HTTP_CREATED);
+        return response([
+            'data' => $address
+        ], Response::HTTP_CREATED);
     }
 
     /**
