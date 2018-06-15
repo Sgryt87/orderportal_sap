@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ItImportResource;
 use App\Http\Resources\OrderResource;
 //use Illuminate\Auth\Access\Response;
 use App\OrderBoard;
 use App\ProtectiveCover;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Order;
 use App\ItImport;
 use App\Presell;
@@ -183,6 +181,7 @@ class OrderController extends Controller
     {
 
         $data = $request->all();
+//        $delivery_date = Order::where('requested_enclosure_delivery_date', $request->input('nsn'))->first();
 
         for ($i = 0; $i < count($data); $i++) {
             $requested_enclosure_delivery_date           = $data[$i]['requested_enclosure_delivery_date'];
@@ -243,6 +242,18 @@ class OrderController extends Controller
         ], Response::HTTP_CREATED);
     }
 
+    public function datepicker(Request $request)
+    {
+        $dates = DB::table('orders')
+                   ->select('requested_enclosure_delivery_date')
+                   ->groupBy('requested_enclosure_delivery_date')
+                   ->get();
+
+        return response([
+            'data' => $dates
+        ], Response::HTTP_OK);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -250,10 +261,8 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public
-    function destroy(
-        $id
-    ) {
+    public function destroy($id)
+    {
         $order = Order::findOrFail($id);
         $order->delete();
 

@@ -65,57 +65,6 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </li>
-
-                <!--custom-->
-                <!--<li class="page-item">-->
-                <!--<a class="page-link" aria-label="Previous" @click="navigate_to_the_prev()">-->
-                <!--<span aria-hidden="true">&laquo;</span>-->
-                <!--<span class="sr-only">Previous</span>-->
-                <!--</a>-->
-                <!--</li>-->
-
-                <!--<li class="page-item" v-if="current_page >= 5" @click="navigate_to_the_page(1)">-->
-                <!--<a class="page-link">1</a>-->
-                <!--</li>-->
-                <!--<li class="page-item" v-if="current_page >= 5">-->
-                <!--<a class="page-link">...</a>-->
-                <!--</li>-->
-                <!--&lt;!&ndash;&ndash;&gt;-->
-                <!--<li class="page-item" v-if="current_page > 2">-->
-                <!--<a class="page-link"-->
-                <!--@click="navigate_to_the_page(current_page-2)">{{current_page-2}}</a>-->
-                <!--</li>-->
-                <!--<li class="page-item" v-if="current_page > 1" @click="navigate_to_the_page(current_page-1)">-->
-                <!--<a class="page-link">{{current_page -1}}</a>-->
-                <!--</li>-->
-
-                <!--<li class="page-item active">-->
-                <!--<a class="page-link" @click="navigate_to_the_page(current_page)">{{current_page}}</a>-->
-                <!--</li>-->
-
-                <!--<li class="page-item" v-if="current_page < total_pages - 1">-->
-                <!--<a class="page-link" @click="navigate_to_the_page(current_page+1)">{{current_page+1}}</a>-->
-                <!--</li>-->
-
-                <!--<li class="page-item" v-if="current_page < total_pages - 2">-->
-                <!--<a class="page-link" @click="navigate_to_the_page(current_page+2)">{{current_page+2}}</a>-->
-                <!--</li>-->
-
-                <!--<li class="page-item" v-if="current_page < total_pages - 5">-->
-                <!--<a class="page-link">...</a>-->
-                <!--</li>-->
-                <!--<li class="page-item" v-if="current_page < total_pages - 5" @click="navigate_to_the_page(total_pages)">-->
-                <!--<a class="page-link">{{total_pages}}</a>-->
-                <!--</li>-->
-
-                <!--<li class="page-item">-->
-                <!--<a class="page-link" aria-label="Next" @click="navigate_to_the_next()">-->
-                <!--<span aria-hidden="true">&raquo;</span>-->
-                <!--<span class="sr-only">Next</span>-->
-                <!--</a>-->
-                <!--</li>-->
-                <!--custom-->
-
             </ul>
         </nav>
         <!--Errors-->
@@ -159,9 +108,9 @@
                 axios.get(`api/it-imports?page=` + page)
                     .then(response => {
                         console.log(response);
-                        this.it_imports = response.data;
-                        this.current_page = response.data.current_page;
-                        this.total_pages = response.data.last_page;
+                        this.it_imports = response.data.data;
+                        this.current_page = response.data.data.current_page;
+                        this.total_pages = response.data.data.last_page;
                     })
                     .catch(e => {
                         this.errors.push(e)

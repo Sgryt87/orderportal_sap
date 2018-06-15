@@ -22,6 +22,9 @@ import AdminItExport from './components/admin/AdminItExport';
 import VCalendar from 'v-calendar';
 import 'v-calendar/lib/v-calendar.min.css';
 
+import Notifications from 'vue-notification'
+
+
 
 
 
@@ -36,7 +39,7 @@ import 'v-calendar/lib/v-calendar.min.css';
 
 Vue.use(VueRouter);
 Vue.use(VCalendar, {firstDayOfWeek: 2});
-
+Vue.use(Notifications);
 
 // Vue.use(require('vue-moment'));
 // 0. If using a module system (e.g. via vue-cli), import Vue and VueRouter

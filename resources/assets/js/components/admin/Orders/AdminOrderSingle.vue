@@ -3,9 +3,9 @@
         <!-- Breadcrumbs-->
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#">Order Portal</a>
+                <a href="#">Orders</a>
             </li>
-            <li class="breadcrumb-item active">Orders</li>
+            <li class="breadcrumb-item active">Single</li>
         </ol>
         <div v-if="notifications.length">
             <div class="alert alert-success" role="alert" v-for="item in notifications">
@@ -61,10 +61,21 @@
             </div>
             <div class="form-group">
                 <label>Requested Enclosure Delivery Date</label>
-                <!--<input class="form-control" type="text" v-model="order.requested_enclosure_delivery_date"-->
-                <!--value="05-05-2015">-->
+<!--min date will be calculated now + 35 dayts + holidays -->
+                <!--           :available-dates='{
+                        weekdays: [2, 6]
+                        }'
+                                :available-attribute='availableAttribute'
+                                -->
                 <v-date-picker
-                        mode='range'
+                        mode='single'
+                        :formats='formats'
+                        :disabled-dates='{
+                             weekdays: [1, 7]
+                         }'
+                        :disabled-attribute='disabledAttribute'
+                        :min-date='new Date()'
+                        :max-date='new Date(new Date().setFullYear(new Date().getFullYear() + 1))'
                         v-model='selectedDate'
                         show-caps>
                 </v-date-picker>
@@ -85,9 +96,7 @@
 
 
     export default {
-        components: {
-
-        },
+        components: {},
         data: function () {
             return {
                 order: {},
@@ -98,9 +107,27 @@
                 protective_covers: [],
                 height_requirements: [],
                 notifications: [],
-                selectedDate: {
-                    start: new Date(2018, 0, 9),
-                    end: new Date(2018, 0, 18)
+                selectedDate: null,
+                formats: {
+                    title: 'MMMM YYYY',
+                    weekdays: 'W',
+                    navMonths: 'MMM',
+                    input: ['L', 'YYYY-MM-DD', 'YYYY/MM/DD'], // Only for `v-date-picker`
+                    dayPopover: 'L', // Only for `v-date-picker`
+                    data: ['L', 'YYYY-MM-DD', 'YYYY/MM/DD'] // For attribute dates
+                },
+                disabledAttribute: {
+                    dot: {
+                        backgroundColor: 'red'
+                    },
+                    contentStyle: {
+                        opacity: 0.5
+                    }
+                },
+               availableAttribute: {
+                    dot: {
+                        backgroundColor: 'green'
+                    }
                 }
             }
         },

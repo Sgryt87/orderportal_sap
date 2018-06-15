@@ -19,9 +19,12 @@ class ItImportController extends Controller
      */
     public function index()
     {
-        $it_import = ItImport::orderBy('created_at', 'desc')->paginate(10);
+        $it_import = ItImport::orderBy('created_at', 'desc')->paginate(20);
 
-        return response()->json($it_import);
+//        return response()->json($it_import);
+        return response([
+            'data' => $it_import
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -43,23 +46,7 @@ class ItImportController extends Controller
      */
     public function store(ItImportRequest $request)
     {
-        $it_import = new ItImport();
-
-        $this->nsn                               = $request->input('nsn');
-        $this->store_address                     = $request->input('store_address');
-        $this->store_city                        = $request->input('store_city');
-        $this->store_zip                         = $request->input('store_zip');
-        $this->restaurant_drive_thru_type        = $request->input('restaurant_drive_thru_type');
-        $this->coates_hardware_board_type        = $request->input('coates_hardware_board_type');
-        $this->coates_hardware_screen_protection = $request->input('coates_hardware_screen_protection');
-        $this->coates_hardware_number_of_screens = $request->input('coates_hardware_number_of_screens');
-        $this->coates_hardware_configuration     = $request->input('coates_hardware_configuration');
-        $this->coates_order_received_date        = $request->input('coates_order_received_date');
-        $this->coates_order_quote_submitted      = $request->input('coates_order_quote_submitted');
-        $this->coates_order_po_approved          = $request->input('coates_order_po_approved');
-        $this->coates_order_ship_date            = $request->input('coates_order_ship_date');
-
-        return new ItImportResource($it_import);
+//import from CSV
     }
 
     /**
@@ -73,7 +60,9 @@ class ItImportController extends Controller
     {
         $it_import = ItImport::findOrFail($id);
 
-        return new ItImportResource($it_import);
+        return response([
+            'data' => new ItImportResource($it_import)
+        ], Response::HTTP_OK);
     }
 
     public function showByNSN(Request $request)

@@ -3,9 +3,9 @@
         <!-- Breadcrumbs-->
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#">Order Portal</a>
+                <a href="#">Orders</a>
             </li>
-            <li class="breadcrumb-item active">Orders</li>
+            <li class="breadcrumb-item active">History</li>
         </ol>
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -86,11 +86,6 @@
                         </div>
                     </td>
                     <td>
-                        <!--<div v-if="order.id === editId">-->
-                        <!--<Datepicker v-model="order.requested_enclosure_delivery_date"-->
-                        <!--:format="customFormatter"></Datepicker>-->
-                        <!--&lt;!&ndash;<v-date-picker></v-date-picker>&ndash;&gt;-->
-                        <!--</div>-->
                         <div>
                             {{ order.requested_enclosure_delivery_date }}
                         </div>

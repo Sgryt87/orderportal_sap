@@ -3,9 +3,9 @@
         <!-- Breadcrumbs-->
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#">Order Portal</a>
+                <a href="#">Orders</a>
             </li>
-            <li class="breadcrumb-item active">Orders</li>
+            <li class="breadcrumb-item active">Bulk</li>
         </ol>
         <button @click="" class="btn btn-outline-info mb-3">Download Template</button>
         <button @click="storeCSV()" class="btn btn-outline-success mb-3">Submit Your CSV</button>
@@ -33,13 +33,13 @@
                     <td>
                         {{order.nsn}}
                     </td>
-                    <!--<td v-if="order.nsn">-->
-                    <!--{{fetch_address_by_nsn(order.nsn)}}-->
-                    <!--{{address.store_address}}-->
-                    <!--{{address.store_city}}-->
-                    <!--{{address.store_state}}-->
-                    <!--{{address.store_zip}}-->
-                    <!--</td>-->
+                    <td v-if="order.nsn">
+                        {{fetch_address_by_nsn(order.nsn)}}
+                        <!--{{address.store_address}}-->
+                        <!--{{address.store_city}}-->
+                        <!--{{address.store_state}}-->
+                        <!--{{address.store_zip}}-->
+                    </td>
                     <td>
                         {{order.presell}}
                     </td>
@@ -173,7 +173,7 @@
             },
             fetch_address_by_nsn(nsn) {
                 if (nsn > 0) {
-                    axios.post(`api/orders-nsn`, nsn)
+                    axios.post(`api/orders-nsn`, {nsn})
                         .then(response => {
                             // this.notifications.push('Address');
                             this.address = response.data.data;
