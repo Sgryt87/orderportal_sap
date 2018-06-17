@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Presell;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class PresellController extends Controller
 {
@@ -14,8 +15,9 @@ class PresellController extends Controller
      */
     public function index()
     {
-        $presells = Presell::all();
-        return response()->json($presells);
+        return response([
+            'data' => Presell::all()
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -31,7 +33,8 @@ class PresellController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -42,7 +45,8 @@ class PresellController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -53,7 +57,8 @@ class PresellController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -64,8 +69,9 @@ class PresellController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -76,7 +82,8 @@ class PresellController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

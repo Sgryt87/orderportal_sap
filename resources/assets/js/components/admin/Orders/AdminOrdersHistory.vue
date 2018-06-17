@@ -30,10 +30,7 @@
                     <td>{{index + 1}}</td>
                     <td>email@static.com</td>
                     <td>
-                        <div v-if="order.id === editId">
-                            <input type="text" v-model="order.nsn">
-                        </div>
-                        <div v-else>
+                        <div>
                             {{order.nsn}}
                         </div>
                     </td>
@@ -81,13 +78,25 @@
                                 </option>
                             </select>
                         </div>
-                        <div>
+                        <div v-else>
                             {{order.height_requirement.value}}
                         </div>
                     </td>
                     <td>
-                        <div>
-                            {{ order.requested_enclosure_delivery_date }}
+                        <div v-if="order.id === editId">
+                            <v-date-picker
+                                    mode='single'
+                                    :formats='formats'
+                                    :disabled-dates='disabled_days'
+                                    :disabled-attribute='disabledAttribute'
+                                    :min-date='new Date()'
+                                    :max-date='new Date(new Date().setFullYear(new Date().getFullYear() + 1))'
+                                    v-model='order.requested_enclosure_delivery_date'
+                                    show-caps>
+                            </v-date-picker>
+                        </div>
+                        <div v-else>
+                            {{ date_to_string(order.requested_enclosure_delivery_date) }}
                         </div>
                     </td>
                     <td>
@@ -116,13 +125,13 @@
                     </td>
                     <td>
                         <div v-if="order.id === editId">
-                            <i class="fa fa-check" @click="saveElement(order)"></i>
-                            <i class="fas fa-ban" @click="cancelElement(index)"></i>
+                            <i class="fa fa-check" @click="save_edit_order(order)"></i>
+                            <i class="fas fa-ban" @click="cancel_edit_order(index)"></i>
                         </div>
                         <div v-else>
                             <!--<i class="fas fa-plus" @click="addElement(order)"></i>-->
-                            <i class="far fa-edit" @click="editElement(order)"></i>
-                            <i class="far fa-trash-alt" @click="deleteElement(order, index)"></i>
+                            <i class="far fa-edit" @click="edit_order(order)"></i>
+                            <i class="far fa-trash-alt" @click="delete_order(order, index)"></i>
                         </div>
                     </td>
                 </tr>
@@ -134,6 +143,8 @@
 
 <script>
     import axios from 'axios';
+    import DisabledDays from './../../../disabledDays';
+    import Pagination from './../../services/Pagination';
 
     export default {
         components: {},
@@ -148,6 +159,33 @@
                 height_requirements: [],
                 errors: [],
                 editId: null,
+
+                current_page: null,
+                total_pages: null,
+
+                disabled_days: null,
+
+                formats: {
+                    title: 'MMMM YYYY',
+                    weekdays: 'WW',
+                    navMonths: 'MMM',
+                    input: ['L', 'YYYY-MM-DD', 'YYYY/MM/DD'], // Only for `v-date-picker`
+                    dayPopover: 'L', // Only for `v-date-picker`
+                    data: ['L', 'YYYY-MM-DD', 'YYYY/MM/DD'] // For attribute dates
+                },
+                disabledAttribute: {
+                    dot: {
+                        backgroundColor: 'red'
+                    },
+                    contentStyle: {
+                        opacity: 0.5
+                    }
+                },
+                availableAttribute: {
+                    dot: {
+                        backgroundColor: 'green'
+                    }
+                }
             }
         },
 
@@ -156,14 +194,15 @@
             this.fetch_presells_data();
             this.fetch_protective_covers_data();
             this.fetch_height_requirements_data();
-            this.fetch_order_data();
+            this.fetch_orders_data();
+            this.disabled_days = DisabledDays.disabledDays();
         },
         methods: {
             //SELECTS
             fetch_presells_data() {
                 axios.get(`api/presells`)
                     .then(response => {
-                        this.presells = response.data;
+                        this.presells = response.data.data;
                     })
                     .catch(e => {
                         this.errors.push(e)
@@ -172,7 +211,7 @@
             fetch_order_boards_data() {
                 axios.get(`api/order-boards`)
                     .then(response => {
-                        this.order_boards = response.data;
+                        this.order_boards = response.data.data;
                     })
                     .catch(e => {
                         this.errors.push(e)
@@ -181,7 +220,7 @@
             fetch_protective_covers_data() {
                 axios.get(`api/protective-covers`)
                     .then(response => {
-                        this.protective_covers = response.data;
+                        this.protective_covers = response.data.data;
                     })
                     .catch(e => {
                         this.errors.push(e)
@@ -190,16 +229,21 @@
             fetch_height_requirements_data() {
                 axios.get(`api/height-requirements`)
                     .then(response => {
-                        this.height_requirements = response.data;
+                        this.height_requirements = response.data.data;
                     })
                     .catch(e => {
                         this.errors.push(e)
                     })
             },
-            fetch_order_data(page) {
+            fetch_orders_data(page) {
                 axios.get(`api/orders`)
                     .then(response => {
-                        this.orders = response.data;
+                        this.orders = response.data.data;
+                        for (let i = 0; i < this.orders.length; i++) {
+                            this.orders[i].requested_enclosure_delivery_date = new
+                            Date(this.orders[i].requested_enclosure_delivery_date);
+                        }
+                        // console.log(this.orders);
                         // this.current_page = response.data.current_page;
                         // this.total_pages = response.data.last_page;
                     })
@@ -208,71 +252,53 @@
                     })
             },
             //ORDERS
-            create_order(order, index) {
-                axios.post(`api/orders`, order)
-                    .then(response => {
-                        this.orders[index] = response.data;
-                        // this.orders.push(response.data);
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-            },
-            addOrder(order) {
-                this.create_orders(order);
-            },
-            update_order_data(order) {
+            update_order(order) {
                 // console.log('TIME', order.requested_enclosure_delivery_date = moment.tz(
                 //     order.requested_enclosure_delivery_date, "America/Toronto"));
-                axios.put(`api/orders/` + order.id, order)
+                axios.put(`api/orders/${order.id}`, order)
                     .then(response => {
-                        order = response.data;
+                        order = response.data.data;
                         // this.current_page = response.data.current_page;
                         // this.total_pages = response.data.last_page;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
-            },
-            saveElement(order, index) {
-                if (order.id === -1) {
-                    console.log(order);
-                    this.create_order(order, index);
-                } else {
-                    // console.log('TIME', order.requested_enclosure_delivery_date = moment.tz(
-                    //     order.requested_enclosure_delivery_date, "America/Toronto"));
-                    this.update_order_data(order);
-                }
-                this.editId = null;
             },
             delete_order(order, index) {
-                axios.delete(`api/orders/` + order.id)
-                    .then(response => {
-                        this.orders.splice(index, 1);
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-            },
-            deleteElement(order, index) {
                 if (confirm('Delete?')) {
-                    if (order.id === -1) {
-                        this.orders.splice(index, 1);
-                    } else {
-                        this.delete_order(order, index);
-                    }
-                    this.editId = null;
+                    axios.delete(`api/orders/${order.id}`)
+                        .then(response => {
+                            this.orders.splice(index, 1);
+                            this.editId = null;
+                        })
+                        .catch(e => {
+                            this.errors.push(e)
+                        })
                 }
             },
-            editElement(order) {
+            //EDITING IN LINE
+            edit_order(order) {
                 this.tempOrder = Object.assign({}, order);
                 this.editId = order.id;
             },
-            cancelElement(index) {
+            cancel_edit_order(index) {
                 Object.assign(this.orders[index], this.tempOrder);
                 this.editId = null;
                 this.tempOrder = null;
+            },
+            save_edit_order(order) {
+                // console.log('TIME', order.requested_enclosure_delivery_date = moment.tz(
+                //     order.requested_enclosure_delivery_date, "America/Toronto"));
+                console.log(order);
+                this.update_order(order);
+                this.editId = null;
+            },
+            date_to_string(date) {
+                return date.toISOString().slice(0, 10);
             }
+
         }
     }
 </script>

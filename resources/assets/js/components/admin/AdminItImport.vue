@@ -7,6 +7,18 @@
             </li>
             <li class="breadcrumb-item active">It Import</li>
         </ol>
+        <div v-if="it_imports">
+            <label>Show pages:</label>
+            <select v-model="per_page" @change="change_per_page">
+                <option v-if="total_rows > 20">20</option>
+                <option v-if="total_rows > 50">50</option>
+                <option v-if="total_rows > 100">100</option>
+                <option v-if="total_rows > 250">250</option>
+                <option v-if="total_rows > 500">500</option>
+                <option v-if="total_rows > 1000">1000</option>
+                <option v-if="total_rows > 10000">10000</option>
+            </select>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -27,8 +39,8 @@
                     <th>Coates Order Ship Date</th>
                 </tr>
                 </thead>
-                <tbody v-if="it_imports.data && it_imports.data.length">
-                <tr v-for="it_import of it_imports.data">
+                <tbody v-if="it_imports && it_imports.length">
+                <tr v-for="it_import of it_imports">
                     <td>{{it_import.nsn}}</td>
                     <td>{{it_import.store_address}}</td>
                     <td>{{it_import.store_city}}</td>
@@ -54,9 +66,9 @@
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">Previous</span>
                     </a>
-                <li v-bind:class="[current_page ==  page ? 'active' : '']" class="page-item" v-for="page in
+                <li v-bind:class="[page_index == page ? 'active' : '']" class="page-item" v-for="page_index in
                 paginate()">
-                    <a class="page-link" @click="navigate_to_the_page(page)">{{page}}</a>
+                    <a class="page-link" @click="navigate_to_the_page(page_index)">{{page_index}}</a>
                 </li>
 
                 <li class="page-item">
@@ -86,13 +98,17 @@
             return {
                 it_imports: [],
                 errors: [],
-                current_page: null,
-                total_pages: null
+
+                page: 1,
+                per_page: 20,
+                total_rows: 0,
+                total_pages: 0,
             }
         },
         methods: {
             navigate_to_the_page: function (page) {
-                this.fetch_data(page);
+                this.page = Number(page);
+                this.fetch_data();
             },
             navigate_to_the_next: function () {
                 if (this.current_page < this.total_pages) {
@@ -104,24 +120,29 @@
                     this.navigate_to_the_page(this.current_page - 1)
                 }
             },
-            fetch_data: function (page) {
-                axios.get(`api/it-imports?page=` + page)
+            fetch_data: function () {
+                axios.get(`api/it-imports?page=${this.page}&per_page=${this.per_page}`)
                     .then(response => {
                         console.log(response);
                         this.it_imports = response.data.data;
-                        this.current_page = response.data.data.current_page;
-                        this.total_pages = response.data.data.last_page;
+                        this.current_page = response.data.page;
+                        this.total_pages = response.data.total_pages;
+                        this.total_rows = response.data.total_rows;
                     })
                     .catch(e => {
                         this.errors.push(e)
                     })
             },
             paginate() {
-                return PaginateService.pagination(this.current_page, this.total_pages);
+                return PaginateService.pagination(this.page, this.total_pages);
+            },
+            change_per_page(){
+                this.page = 1;
+                this.fetch_data();
             }
         },
-        mounted() {
-            this.fetch_data(1);
+        created() {
+            this.fetch_data();
         }
     }
 </script>

@@ -17,7 +17,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <!--<th>Store Address</th>-->
+                    <th>Store Address</th>
                     <th>NSN</th>
                     <th>Presells</th>
                     <th>Order Boards</th>
@@ -34,11 +34,10 @@
                         {{order.nsn}}
                     </td>
                     <td v-if="order.nsn">
-                        {{fetch_address_by_nsn(order.nsn)}}
-                        <!--{{address.store_address}}-->
-                        <!--{{address.store_city}}-->
-                        <!--{{address.store_state}}-->
-                        <!--{{address.store_zip}}-->
+                        {{address_by_nsn[index].store_address}}
+                        {{address_by_nsn[index].store_city}}
+                        {{address_by_nsn[index].store_state}}
+                        {{address_by_nsn[index].store_zip}}
                     </td>
                     <td>
                         {{order.presell}}
@@ -82,7 +81,7 @@
             return {
                 orders: [],
                 notifications: [],
-                address: [],
+                address_by_nsn: [],
                 doc: null,
                 dropzoneOptions: {
                     url: 'null',
@@ -142,7 +141,10 @@
                                     .then(response => {
                                         // console.log('DATA !!!', response);
                                         that.orders = response.data.data;
+                                        that.address_by_nsn = that.orders.map(order => order.nsn);
+                                        that.fetch_address_by_nsn(that.address_by_nsn);
                                         console.log('ORDERS !!!', that.orders);
+                                        console.log('NSN', that.address_by_nsn);
                                     })
                                     .catch(e => {
                                         // this.notifications.push(e);
@@ -172,18 +174,16 @@
                     })
             },
             fetch_address_by_nsn(nsn) {
-                if (nsn > 0) {
-                    axios.post(`api/orders-nsn`, {nsn})
-                        .then(response => {
-                            // this.notifications.push('Address');
-                            this.address = response.data.data;
-                            console.log('address', response.data.data);
-                        })
-                        .catch(e => {
-                            this.notifications.push(e);
-                        })
-                }
+                axios.post(`api/address-by-nsn-bulk`, {data: nsn})
+                    .then(response => {
+                        this.address_by_nsn = response.data.data;
+                        console.log('address_by_nsn', response.data.data);
+                    })
+                    .catch(e => {
+                        this.notifications.push(e);
+                    })
             }
+
         },
     }
 

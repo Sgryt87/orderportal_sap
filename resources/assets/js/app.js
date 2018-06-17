@@ -6,23 +6,20 @@
 
 require('./bootstrap');
 
+
 window.Vue = require('vue');
 
 import VueRouter from 'vue-router';
+import Routes from './routes';
+
 import AdminHeader from './components/admin/AdminHeader';
 import AdminNavbar from './components/admin/AdminNavbar';
 import AdminFooter from './components/admin/AdminFooter';
-import AdminDashboard from './components/admin/AdminDashboard';
-import AdminOrderSingle from './components/admin/Orders/AdminOrderSingle';
-import AdminOrderBulk from './components/admin/Orders/AdminOrderBulk';
-import AdminOrdersHistory from './components/admin/Orders/AdminOrdersHistory';
-import AdminItImport from './components/admin/AdminItImport';
-import AdminItExport from './components/admin/AdminItExport';
 
 import VCalendar from 'v-calendar';
 import 'v-calendar/lib/v-calendar.min.css';
 
-import Notifications from 'vue-notification'
+import VueAWN from "vue-awesome-notifications";
 
 
 
@@ -34,12 +31,17 @@ import Notifications from 'vue-notification'
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
+var options = {
+    labels: {
+        tip: "Your custom tip box label"
+    }
+};
 
 
 Vue.use(VueRouter);
 Vue.use(VCalendar, {firstDayOfWeek: 2});
-Vue.use(Notifications);
+Vue.use(VueAWN, options);
+
 
 // Vue.use(require('vue-moment'));
 // 0. If using a module system (e.g. via vue-cli), import Vue and VueRouter
@@ -53,20 +55,11 @@ Vue.use(Notifications);
 // We'll talk about nested routes later.
 
 
-const routes = [
-    {path: '/admin/dashboard', component: AdminDashboard},
-    {path: '/admin/orders/single', component: AdminOrderSingle},
-    {path: '/admin/orders/bulk', component: AdminOrderBulk},
-    {path: '/admin/orders/history', component: AdminOrdersHistory},
-    {path: '/admin/it-imports', component: AdminItImport},
-    {path: '/admin/it-exports', component: AdminItExport}
-];
-
 // 3. Create the router instance and pass the `routes` option
 // You can pass in additional options here, but let's
 // keep it simple for now.
 const router = new VueRouter({
-    routes // short for `routes: routes`
+    routes: Routes // short for `routes: routes`,
 });
 
 // 4. Create and mount the root instance.
@@ -74,7 +67,7 @@ const router = new VueRouter({
 // whole app router-aware.
 const app = new Vue({
     el: '#app',
-    router,
+    router: router,
     components: {
         VCalendar,
         AdminHeader,

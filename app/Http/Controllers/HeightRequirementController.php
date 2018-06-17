@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\HeightRequirement;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class HeightRequirementController extends Controller
 {
@@ -14,9 +15,9 @@ class HeightRequirementController extends Controller
      */
     public function index()
     {
-        $height_requirements = HeightRequirement::all();
-
-        return response()->json($height_requirements);
+        return response([
+            'data' => HeightRequirement::all()
+        ], Response::HTTP_OK);
     }
 
     /**

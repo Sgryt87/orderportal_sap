@@ -17,13 +17,24 @@ class ItImportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $it_import = ItImport::orderBy('created_at', 'desc')->paginate(20);
+        $page     = $request->query('page');
+        $per_page = $request->query('per_page');
 
-//        return response()->json($it_import);
+//        $it_import = ItImport::orderBy('created_at', 'desc')->paginate(20);
+        $total_rows = ItImport::count();
+        $skip       = ($page - 1) * $per_page;
+        $take       = $per_page;
+
+        $it_import = ItImport::skip($skip)->take($take)->get();
+
         return response([
-            'data' => $it_import
+            'data'        => $it_import,
+            'total_rows'  => $total_rows,
+            'total_pages' => round($total_rows / $per_page),
+            'per_page'    => $per_page,
+            'page'        => $page
         ], Response::HTTP_OK);
     }
 
@@ -65,14 +76,32 @@ class ItImportController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function showByNSN(Request $request)
-    {
-        $address = ItImport::where('nsn', $request->input('nsn'))->first();
 
+    public function getAddressByNSN(Request $request)
+    {
+        $address_by_nsn = ItImport::where('nsn', $request->input('nsn'))->first();
 
         return response([
-            'data' => $address
-        ], Response::HTTP_CREATED);
+            'data' => $address_by_nsn
+        ], Response::HTTP_OK);
+    }
+
+    public function getAddressesByNSN(Request $request)
+    {
+        $data = $request->input('data');
+
+        $arrItImport = [];
+
+        for ($i = 0; $i < count($data); $i++) {
+
+            $itImport = ItImport::where('nsn', $data[$i])->first();
+
+            array_push($arrItImport, $itImport);
+        }
+
+        return response([
+            'data' => $arrItImport
+        ], Response::HTTP_OK);
     }
 
     /**

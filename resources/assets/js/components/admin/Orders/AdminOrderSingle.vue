@@ -18,13 +18,13 @@
                 <input type="text" class="form-control" v-model="order.nsn" id="nsn" placeholder=""
                        @blur="fetch_address_by_nsn(order.nsn)">
             </div>
-            <div v-if="address" class="form-group">
+            <div v-if="address_by_nsn" class="form-group">
                 <label for="address">Store Address</label>
                 <textarea class="form-control" name="" id="address" cols="30" rows="4" readonly>
-                    {{address.store_address}}
-                    {{address.store_city}}
-                    {{address.store_state}}
-                    {{address.store_zip}}
+                    {{address_by_nsn.store_address}}
+                    {{address_by_nsn.store_city}}
+                    {{address_by_nsn.store_state}}
+                    {{address_by_nsn.store_zip}}
                 </textarea>
             </div>
             <div class="form-group">
@@ -61,22 +61,14 @@
             </div>
             <div class="form-group">
                 <label>Requested Enclosure Delivery Date</label>
-<!--min date will be calculated now + 35 dayts + holidays -->
-                <!--           :available-dates='{
-                        weekdays: [2, 6]
-                        }'
-                                :available-attribute='availableAttribute'
-                                -->
                 <v-date-picker
                         mode='single'
                         :formats='formats'
-                        :disabled-dates='{
-                             weekdays: [1, 7]
-                         }'
+                        :disabled-dates='disabled_days'
                         :disabled-attribute='disabledAttribute'
                         :min-date='new Date()'
                         :max-date='new Date(new Date().setFullYear(new Date().getFullYear() + 1))'
-                        v-model='selectedDate'
+                        v-model='order.requested_enclosure_delivery_date'
                         show-caps>
                 </v-date-picker>
             </div>
@@ -92,25 +84,33 @@
 
 
 <script>
-    import axios from 'axios';
 
+
+    import axios from 'axios';
+    import DisabledDays from './../../../disabledDays';
 
     export default {
         components: {},
         data: function () {
             return {
                 order: {},
-                nsn: '',
-                address: null,
+                address_by_nsn: null,
                 presells: [],
                 order_boards: [],
                 protective_covers: [],
                 height_requirements: [],
                 notifications: [],
-                selectedDate: null,
+
+                labels: {
+                    tip: "Your custom tip box label"
+                },
+
+
+                disabled_days: null,
+
                 formats: {
                     title: 'MMMM YYYY',
-                    weekdays: 'W',
+                    weekdays: 'WW',
                     navMonths: 'MMM',
                     input: ['L', 'YYYY-MM-DD', 'YYYY/MM/DD'], // Only for `v-date-picker`
                     dayPopover: 'L', // Only for `v-date-picker`
@@ -124,7 +124,7 @@
                         opacity: 0.5
                     }
                 },
-               availableAttribute: {
+                availableAttribute: {
                     dot: {
                         backgroundColor: 'green'
                     }
@@ -137,12 +137,14 @@
             this.fetch_presells_data();
             this.fetch_protective_covers_data();
             this.fetch_height_requirements_data();
+            this.disabled_days = DisabledDays.disabledDays();
+            // console.log(this.disabled_days);
         },
         methods: {
             fetch_presells_data() {
                 axios.get(`api/presells`)
                     .then(response => {
-                        this.presells = response.data;
+                        this.presells = response.data.data;
                         this.order.presell = this.presells[0];
                     })
                     .catch(e => {
@@ -152,7 +154,7 @@
             fetch_order_boards_data() {
                 axios.get(`api/order-boards`)
                     .then(response => {
-                        this.order_boards = response.data;
+                        this.order_boards = response.data.data;
                         this.order.order_board = this.order_boards[0];
                     })
                     .catch(e => {
@@ -162,7 +164,7 @@
             fetch_protective_covers_data() {
                 axios.get(`api/protective-covers`)
                     .then(response => {
-                        this.protective_covers = response.data;
+                        this.protective_covers = response.data.data;
                         this.order.protective_cover = this.protective_covers[0];
                     })
                     .catch(e => {
@@ -172,25 +174,12 @@
             fetch_height_requirements_data() {
                 axios.get(`api/height-requirements`)
                     .then(response => {
-                        this.height_requirements = response.data;
+                        this.height_requirements = response.data.data;
                         this.order.height_requirement = this.height_requirements[0];
                     })
                     .catch(e => {
                         this.errors.push(e)
                     })
-            },
-            fetch_address_by_nsn(nsn) {
-                if (nsn > 0) {
-                    axios.post(`api/orders-nsn`, {nsn})
-                        .then(response => {
-                            // this.notifications.push('Address');
-                            this.address = response.data.data;
-                            console.log('address', response.data.data);
-                        })
-                        .catch(e => {
-                            this.notifications.push(e);
-                        })
-                }
             },
             create_order() {
                 axios.post(`api/orders`, this.order)
@@ -198,13 +187,29 @@
                     .then(response => {
                         this.notifications.push('Submitted');
                         console.log(response, 'submitted');
+                        this.$awn.success("Order Created!");
+
                     })
                     .catch(e => {
                         this.notifications.push(e);
                     })
+            },
+            fetch_address_by_nsn(nsn) {
+                if (nsn > 0) {
+                    axios.post(`api/address-by-nsn-single`, {'nsn': nsn})
+                        .then(response => {
+                            console.log('address', response.data.data);
+                            this.address_by_nsn = response.data.data;
+                        })
+                        .catch(e => {
+                            this.notifications.push(e);
+                        })
+                }
             }
         }
     }
 </script>
+
+
 
 

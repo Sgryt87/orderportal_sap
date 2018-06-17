@@ -22,7 +22,9 @@ Route::apiResource('orders', 'OrderController');
 
 Route::post('orders-bulk-store', 'OrderController@storeBulk');
 
-Route::post('orders-nsn', 'ItImportController@showByNSN');
+Route::post('address-by-nsn-single', 'ItImportController@getAddressByNSN');
+
+Route::post('address-by-nsn-bulk', 'ItImportController@getAddressesByNSN');
 
 Route::post('orders-validate-bulk', 'OrderController@validateBulk');
 
