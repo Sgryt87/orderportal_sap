@@ -147,9 +147,10 @@
                         this.presells = response.data.data;
                         this.order.presell = this.presells[0];
                     })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
+                    });
             },
             fetch_order_boards_data() {
                 axios.get(`api/order-boards`)
@@ -157,9 +158,10 @@
                         this.order_boards = response.data.data;
                         this.order.order_board = this.order_boards[0];
                     })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
+                    });
             },
             fetch_protective_covers_data() {
                 axios.get(`api/protective-covers`)
@@ -167,9 +169,10 @@
                         this.protective_covers = response.data.data;
                         this.order.protective_cover = this.protective_covers[0];
                     })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
+                    });
             },
             fetch_height_requirements_data() {
                 axios.get(`api/height-requirements`)
@@ -177,9 +180,10 @@
                         this.height_requirements = response.data.data;
                         this.order.height_requirement = this.height_requirements[0];
                     })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
+                    });
             },
             create_order() {
                 axios.post(`api/orders`, this.order)
@@ -190,9 +194,10 @@
                         this.$awn.success("Order Created!");
 
                     })
-                    .catch(e => {
-                        this.notifications.push(e);
-                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
+                    });
             },
             fetch_address_by_nsn(nsn) {
                 if (nsn > 0) {
@@ -201,8 +206,9 @@
                             console.log('address', response.data.data);
                             this.address_by_nsn = response.data.data;
                         })
-                        .catch(e => {
-                            this.notifications.push(e);
+                        .catch((error) => {
+                            this.errors.push(error.response.data.errors);
+                            console.log(error.response);
                         })
                 }
             }

@@ -33,7 +33,6 @@
                 'Requested Enclosure Delivery Date',
                 'Delivery Notes'
             ];
-            console.log('L DAT', data);
 
             if (columnHeaders.length != Object.keys(data[0]).length) {
                 console.log(columnHeaders.length, '  ', Object.keys(data[0]).length);

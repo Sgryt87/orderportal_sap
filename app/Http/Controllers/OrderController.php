@@ -81,7 +81,6 @@ class OrderController extends Controller
 
         $data = $request->all();
 
-//        return print_r($data);
         $data             = $data['data'];
         $arrOrder         = [];
         $arrOrderResource = [];
@@ -189,6 +188,7 @@ class OrderController extends Controller
 
             $data[$i]['errors'] = [];
 
+//todo Place into trait(interface)
 
             if (ItImport::where('nsn', $data[$i]['nsn'])->first() != null) {
                 if (Order::where('nsn', $data[$i]['nsn'])->first()) {
@@ -237,6 +237,7 @@ class OrderController extends Controller
 
         }
 
+
         return response([
             'data' => $data
         ], Response::HTTP_CREATED);
@@ -264,7 +265,7 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
-        $order->delete();
+//        $order->delete();
 
         return response([
             'data' => null

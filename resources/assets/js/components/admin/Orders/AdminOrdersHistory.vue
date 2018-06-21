@@ -129,7 +129,6 @@
                             <i class="fas fa-ban" @click="cancel_edit_order(index)"></i>
                         </div>
                         <div v-else>
-                            <!--<i class="fas fa-plus" @click="addElement(order)"></i>-->
                             <i class="far fa-edit" @click="edit_order(order)"></i>
                             <i class="far fa-trash-alt" @click="delete_order(order, index)"></i>
                         </div>
@@ -159,6 +158,7 @@
                 height_requirements: [],
                 errors: [],
                 editId: null,
+                loading: false,
 
                 current_page: null,
                 total_pages: null,
@@ -204,8 +204,9 @@
                     .then(response => {
                         this.presells = response.data.data;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
             },
             fetch_order_boards_data() {
@@ -213,8 +214,9 @@
                     .then(response => {
                         this.order_boards = response.data.data;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
             },
             fetch_protective_covers_data() {
@@ -222,8 +224,9 @@
                     .then(response => {
                         this.protective_covers = response.data.data;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
             },
             fetch_height_requirements_data() {
@@ -231,8 +234,9 @@
                     .then(response => {
                         this.height_requirements = response.data.data;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
             },
             fetch_orders_data(page) {
@@ -247,8 +251,9 @@
                         // this.current_page = response.data.current_page;
                         // this.total_pages = response.data.last_page;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response);
+                        console.log(error.response);
                     })
             },
             //ORDERS
@@ -262,21 +267,41 @@
                         // this.total_pages = response.data.last_page;
                     })
                     .catch((error) => {
-                        this.errors.push(error.response.data.errors);
+                        this.errors.push(error.response);
                         console.log(error.response);
                     })
             },
             delete_order(order, index) {
-                if (confirm('Delete?')) {
-                    axios.delete(`api/orders/${order.id}`)
-                        .then(response => {
-                            this.orders.splice(index, 1);
-                            this.editId = null;
-                        })
-                        .catch(e => {
-                            this.errors.push(e)
-                        })
-                }
+                this.$awn.confirm("Delete?",this.onOk(order),this.onCancel());
+                // if (confirm('Delete?')) {
+                //     axios.delete(`api/orders/${order.id}`)
+                //         .then(response => {
+                //             this.orders.splice(index, 1);
+                //             this.editId = null;
+                //             this.$awn.success("Deleted!");
+                //         })
+                //         .catch((error) => {
+                //             this.errors.push(error.response);
+                //             console.log(error.response);
+                //         })
+                // }
+            },
+            onOk(order){
+                console.log('del');
+                axios.delete(`api/orders/${order.id}`)
+                    .then(response => {
+                        this.orders.splice(index, 1);
+                        this.editId = null;
+                        this.$awn.success("Deleted!");
+                        console.log('del');
+                    })
+                    .catch((error) => {
+                        this.errors.push(error.response);
+                        console.log(error.response);
+                    })
+            },
+            onCancel(){
+                this.editId = null;
             },
             //EDITING IN LINE
             edit_order(order) {
@@ -294,10 +319,12 @@
                 console.log(order);
                 this.update_order(order);
                 this.editId = null;
+                this.$awn.success("Saved!");
             },
             date_to_string(date) {
                 return date.toISOString().slice(0, 10);
-            }
+            },
+
 
         }
     }

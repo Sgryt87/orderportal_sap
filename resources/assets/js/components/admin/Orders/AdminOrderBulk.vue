@@ -7,11 +7,16 @@
             </li>
             <li class="breadcrumb-item active">Bulk</li>
         </ol>
-        <button @click="" class="btn btn-outline-info mb-3">Download Template</button>
+        <button @click="warning()" class="btn btn-outline-info mb-3">Download Template</button>
         <button @click="storeCSV()" class="btn btn-outline-success mb-3">Submit Your CSV</button>
+        <div v-if="orders && orders.length">
+            <div v-for="(error,index) in orders" class="alert alert-danger" role="alert">
+                {{orders[index].errors}}
+            </div>
+
+        </div>
         <div class="table-responsive">
             <vue-dropzone @vdropzone-file-added="uploadCSV" :options="dropzoneOptions" id="dropzone"></vue-dropzone>
-            <div v-for="error in orders.error" class="error">{{error}}</div>
             <table v-if="orders && orders.length" class="table table-bordered" id="dataTable" width="100%"
                    cellspacing="0">
                 <thead>
@@ -82,6 +87,7 @@
                 orders: [],
                 notifications: [],
                 address_by_nsn: [],
+                errors: [],
                 doc: null,
                 dropzoneOptions: {
                     url: 'null',
@@ -128,7 +134,7 @@
                         dynamicTyping: true,
                         skipEmptyLines: true,
                         complete(results) {
-                            console.log('complete', results);
+                            console.log('papa', results);
 
                             if (!BulkValidator.validate(results.data)) {
                                 console.log('ERROR VAL', BulkValidator.validationErrors);
@@ -144,11 +150,13 @@
                                         that.address_by_nsn = that.orders.map(order => order.nsn);
                                         that.fetch_address_by_nsn(that.address_by_nsn);
                                         console.log('ORDERS !!!', that.orders);
-                                        console.log('NSN', that.address_by_nsn);
+                                        // if(that.orders.errors.length > 0) {
+                                        console.log('ERR !!!', that.orders.errors);
+                                        // }
                                     })
-                                    .catch(e => {
-                                        // this.notifications.push(e);
-                                        console.log('ERR', e);
+                                    .catch((error) => {
+                                        this.errors.push(error.response);
+                                        console.log('catch err', error.response);
                                     })
                             }
                         },
@@ -168,9 +176,9 @@
                         // }
                         console.log('ORDERS STORED !!!', this.orders);
                     })
-                    .catch(e => {
-                        this.notifications.push(e);
-                        console.log("err", e);
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
             },
             fetch_address_by_nsn(nsn) {
@@ -179,9 +187,13 @@
                         this.address_by_nsn = response.data.data;
                         console.log('address_by_nsn', response.data.data);
                     })
-                    .catch(e => {
-                        this.notifications.push(e);
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
+            },
+            warning(){
+                this.$awn.confirm("Deleted!");
             }
 
         },

@@ -129,8 +129,9 @@
                         this.total_pages = response.data.total_pages;
                         this.total_rows = response.data.total_rows;
                     })
-                    .catch(e => {
-                        this.errors.push(e)
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
                     })
             },
             paginate() {
