@@ -92,7 +92,6 @@ class OrderController extends Controller
 
     public function storeBulk(Request $request)
     {
-
         $data = $request->all();
 
         $data = OrderBulkValidator::validate($data);
@@ -122,7 +121,8 @@ class OrderController extends Controller
             $order['height_requirement_id']             = $height_requirement->id;
             $order['delivery_note']                     = $data[$i]['delivery_note'];
             $order['note']                              = $data[$i]['note'];
-            $order['requested_enclosure_delivery_date'] = DateTime::createFromFormat('m/d/Y', $data[$i]['requested_enclosure_delivery_date'])->format('Y-m-d');
+            $order['requested_enclosure_delivery_date'] = DateTime::createFromFormat('m/d/Y',
+                $data[$i]['requested_enclosure_delivery_date'])->format('Y-m-d');
 
             array_push($arrOrder, $order);
 //            array_push($arrOrderResource, new OrderResource($order));
@@ -138,9 +138,21 @@ class OrderController extends Controller
 
     public static function validateBulk(Request $request)
     {
-        return response([
-            'data' => OrderBulkValidator::validate($request->all())
-        ], Response::HTTP_OK);
+        $data = OrderBulkValidator::validate($request->all());
+
+        if (OrderBulkValidator::isValid($data)) {
+
+            return response([
+                'data' => $data
+            ], Response::HTTP_OK);
+
+        } else {
+
+            return response([
+                'data' => $data
+            ], Response::HTTP_BAD_REQUEST);
+
+        }
     }
 
     /**

@@ -27,36 +27,44 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(order, index) in orders">
-                    <td>{{index + 1}}</td>
-                    <td>
-                        {{order.nsn}}
-                    </td>
-                    <td v-if="order.nsn">
-                        {{address_by_nsn[index].store_address}}
-                        {{address_by_nsn[index].store_city}}
-                        {{address_by_nsn[index].store_state}}
-                        {{address_by_nsn[index].store_zip}}
-                    </td>
-                    <td>
-                        {{order.presell}}
-                    </td>
-                    <td>
-                        {{order.order_board}}
-                    </td>
-                    <td>
-                        {{order.protective_cover}}
-                    </td>
-                    <td>
-                        {{order.height_requirement}}
-                    </td>
-                    <td>
-                        {{ order.requested_enclosure_delivery_date }}
-                    </td>
-                    <td>
-                        {{order.delivery_note}}
-                    </td>
-                </tr>
+                <template v-for="(order, index) in orders">
+                    <tr>
+                        <td>{{index + 1}}</td>
+                        <td>
+                            {{order.nsn}}
+                        </td>
+                        <td v-if="order.nsn">
+                            {{address_by_nsn[index].store_address}}
+                            {{address_by_nsn[index].store_city}}
+                            {{address_by_nsn[index].store_state}}
+                            {{address_by_nsn[index].store_zip}}
+                        </td>
+                        <td>
+                            {{order.presell}}
+
+                        </td>
+                        <td>
+                            {{order.order_board}}
+                        </td>
+                        <td>
+                            {{order.protective_cover}}
+                        </td>
+                        <td>
+                            {{order.height_requirement}}
+                        </td>
+                        <td>
+                            {{ order.requested_enclosure_delivery_date }}
+                        </td>
+                        <td>
+                            {{order.delivery_note}}
+                        </td>
+                    </tr>
+                    <tr v-if="order.errors" >
+                        <td align="center" colspan="9" >
+                            <span v-for="error in order.errors " >333{{error}}</span>
+                        </td>
+                    </tr>
+                </template>
                 </tbody>
             </table>
         </div>
@@ -118,8 +126,7 @@
             },
             //Paparse
             uploadCSV(e) {
-                //otherwise JS doesnt read a function ...
-                let that = this;// what is that for??
+                let that = this;
                 const reader = new FileReader();
                 reader.onload = fileLoadedEvent => {
                     Papa.parse(fileLoadedEvent.target.result, {
@@ -128,9 +135,11 @@
                         skipEmptyLines: true,
                         complete(results) {
                             console.log('papa', results);
-
+                            that.cleanArrays();
                             if (!BulkValidator.validate(results.data)) {
+                                that.$awn.alert(BulkValidator.validationErrors.toString());
                                 console.log('ERROR VAL', BulkValidator.validationErrors);
+                                return that.errors.concat(BulkValidator.validationErrors);
                             } else {
                                 let csvJsonToDBArray = [];
                                 for (let i = 0; i < results.data.length; i++) {
@@ -138,17 +147,18 @@
                                 }
                                 axios.post(`api/orders-validate-bulk`, csvJsonToDBArray)
                                     .then(response => {
-                                        // console.log('DATA !!!', response);
                                         that.orders = response.data.data;
                                         that.address_by_nsn = that.orders.map(order => order.nsn);
                                         that.fetch_address_by_nsn(that.address_by_nsn);
                                         console.log('ORDERS !!!', that.orders);
-                                        // if(that.orders.errors.length > 0) {
                                         console.log('ERR !!!', that.orders.errors);
-                                        // }
                                     })
                                     .catch((error) => {
-                                        this.errors.push(error.response);
+                                        that.orders = error.response.data.data;
+                                        that.address_by_nsn = that.orders.map(order => order.nsn);
+                                        that.fetch_address_by_nsn(that.address_by_nsn);
+                                        // that.errors.push(error.response);
+                                        that.$awn.warning("You have syntax errors in your file!");
                                         console.log('catch err', error.response);
                                     })
                             }
@@ -164,9 +174,7 @@
                 axios.post(`api/orders-bulk-store`, this.orders)
                     .then(response => {
                         this.orders = response.data.data;
-                        // for (let i = 0; i < response.data.length; i++) {
-                        //     this.orders.push(response.data[i]);
-                        // }
+                        this.$awn.alert("You order has been sotored!");
                         console.log('ORDERS STORED !!!', this.orders);
                     })
                     .catch((error) => {
@@ -186,7 +194,13 @@
                     })
             },
             warning() {
-                this.$awn.confirm("Deleted!");
+                this.$awn.alert("Deleted!");
+            },
+            cleanArrays() {
+                this.orders = [];
+                this.notifications = [];
+                this.address_by_nsn = [];
+                this.errors = [];
             }
 
         },

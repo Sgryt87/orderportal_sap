@@ -1,10 +1,10 @@
 <script>
-    import axios from 'axios';
 
     export default {
         validationErrors: [],
 
         validate(data) {
+            this.validationErrors = [];
             if (!this.validateHeaders(data))
                 return false;
 
@@ -13,14 +13,6 @@
 
             return true;
         },
-
-        //1. Validate amount of headers
-        //2. Validate if duplicated
-        //3. Validate headres by itself:
-        //nsn - validate if in it-import = > if in orders -error, else OK
-        // uploda addresses to separate column
-        // check small numbers ... (API CHECK)
-        // check REDD (API)
 
         validateHeaders(data) {
 
@@ -42,7 +34,7 @@
 
             for (let i = 0; i < columnHeaders.length; i++) {
                 if (!data[0].hasOwnProperty(columnHeaders[i])) {
-                    this.validationErrors.push(`Column ${columnHeaders[i]} wasn't found`);
+                    this.validationErrors.push(`File format is incorrect. Please verify you are using the latest upload template. Column header ${columnHeaders[i]} wasn't found`);
                     return false;
                 }
             }
@@ -86,11 +78,7 @@
                 }
             }
             return true;
-        },
-// no needed
-        // validateBulkOrders(orders) {
-        //     return axios.post(`api/orders-validate-bulk`, orders);
-        // }
+        }
 
     }
 </script>

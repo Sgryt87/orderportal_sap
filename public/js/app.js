@@ -54165,7 +54165,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -54186,6 +54186,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue2_dropzone_dist_vue2Dropzone_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_vue2_dropzone_dist_vue2Dropzone_min_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation__ = __webpack_require__(66);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation__);
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -54306,8 +54314,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         //Paparse
         uploadCSV: function uploadCSV(e) {
-            //otherwise JS doesnt read a function ...
-            var that = this; // what is that for??
+            var that = this;
             var reader = new FileReader();
             reader.onload = function (fileLoadedEvent) {
                 __WEBPACK_IMPORTED_MODULE_1_papaparse___default.a.parse(fileLoadedEvent.target.result, {
@@ -54315,30 +54322,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     dynamicTyping: true,
                     skipEmptyLines: true,
                     complete: function complete(results) {
-                        var _this = this;
-
                         console.log('papa', results);
-
+                        that.cleanArrays();
                         if (!__WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation___default.a.validate(results.data)) {
+                            that.$awn.alert(__WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation___default.a.validationErrors.toString());
                             console.log('ERROR VAL', __WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation___default.a.validationErrors);
+                            return that.errors.concat(__WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation___default.a.validationErrors);
                         } else {
                             var csvJsonToDBArray = [];
                             for (var i = 0; i < results.data.length; i++) {
                                 csvJsonToDBArray.push(that.csvJsonToApiJson(results.data[i]));
                             }
                             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-validate-bulk', csvJsonToDBArray).then(function (response) {
-                                // console.log('DATA !!!', response);
                                 that.orders = response.data.data;
                                 that.address_by_nsn = that.orders.map(function (order) {
                                     return order.nsn;
                                 });
                                 that.fetch_address_by_nsn(that.address_by_nsn);
                                 console.log('ORDERS !!!', that.orders);
-                                // if(that.orders.errors.length > 0) {
                                 console.log('ERR !!!', that.orders.errors);
-                                // }
                             }).catch(function (error) {
-                                _this.errors.push(error.response);
+                                that.orders = error.response.data.data;
+                                that.address_by_nsn = that.orders.map(function (order) {
+                                    return order.nsn;
+                                });
+                                that.fetch_address_by_nsn(that.address_by_nsn);
+                                // that.errors.push(error.response);
+                                that.$awn.warning("You have syntax errors in your file!");
                                 console.log('catch err', error.response);
                             });
                         }
@@ -54351,32 +54361,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             reader.readAsText(event.target.files[0]);
         },
         storeCSV: function storeCSV() {
-            var _this2 = this;
+            var _this = this;
 
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-bulk-store', this.orders).then(function (response) {
-                _this2.orders = response.data.data;
-                // for (let i = 0; i < response.data.length; i++) {
-                //     this.orders.push(response.data[i]);
-                // }
-                console.log('ORDERS STORED !!!', _this2.orders);
+                _this.orders = response.data.data;
+                _this.$awn.alert("You order has been sotored!");
+                console.log('ORDERS STORED !!!', _this.orders);
+            }).catch(function (error) {
+                _this.errors.push(error.response);
+                console.log(error.response);
+            });
+        },
+        fetch_address_by_nsn: function fetch_address_by_nsn(nsn) {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/address-by-nsn-bulk', { data: nsn }).then(function (response) {
+                _this2.address_by_nsn = response.data.data;
+                console.log('address_by_nsn', response.data.data);
             }).catch(function (error) {
                 _this2.errors.push(error.response);
                 console.log(error.response);
             });
         },
-        fetch_address_by_nsn: function fetch_address_by_nsn(nsn) {
-            var _this3 = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/address-by-nsn-bulk', { data: nsn }).then(function (response) {
-                _this3.address_by_nsn = response.data.data;
-                console.log('address_by_nsn', response.data.data);
-            }).catch(function (error) {
-                _this3.errors.push(error.response);
-                console.log(error.response);
-            });
-        },
         warning: function warning() {
-            this.$awn.confirm("Deleted!");
+            this.$awn.alert("Deleted!");
+        },
+        cleanArrays: function cleanArrays() {
+            this.orders = [];
+            this.notifications = [];
+            this.address_by_nsn = [];
+            this.errors = [];
         }
     }
 });
@@ -56245,31 +56259,19 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     validationErrors: [],
 
     validate: function validate(data) {
+        this.validationErrors = [];
         if (!this.validateHeaders(data)) return false;
 
         if (!this.validateDuplicates(data)) return false;
 
         return true;
     },
-
-
-    //1. Validate amount of headers
-    //2. Validate if duplicated
-    //3. Validate headres by itself:
-    //nsn - validate if in it-import = > if in orders -error, else OK
-    // uploda addresses to separate column
-    // check small numbers ... (API CHECK)
-    // check REDD (API)
-
     validateHeaders: function validateHeaders(data) {
 
         var columnHeaders = ['NSN', '# of PreSells', '# of Order Boards', 'Protective Covers', 'Height Requirements', 'Requested Enclosure Delivery Date', 'Delivery Notes'];
@@ -56282,7 +56284,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         for (var i = 0; i < columnHeaders.length; i++) {
             if (!data[0].hasOwnProperty(columnHeaders[i])) {
-                this.validationErrors.push('Column ' + columnHeaders[i] + ' wasn\'t found');
+                this.validationErrors.push('File format is incorrect. Please verify you are using the latest upload template. Column header ' + columnHeaders[i] + ' wasn\'t found');
                 return false;
             }
         }
@@ -56386,85 +56388,112 @@ var render = function() {
                 _vm._v(" "),
                 _c(
                   "tbody",
-                  _vm._l(_vm.orders, function(order, index) {
-                    return _c("tr", [
-                      _c("td", [_vm._v(_vm._s(index + 1))]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.nsn) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      order.nsn
-                        ? _c("td", [
+                  [
+                    _vm._l(_vm.orders, function(order, index) {
+                      return [
+                        _c("tr", [
+                          _c("td", [_vm._v(_vm._s(index + 1))]),
+                          _vm._v(" "),
+                          _c("td", [
                             _vm._v(
-                              "\n                    " +
+                              "\n                        " +
+                                _vm._s(order.nsn) +
+                                "\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          order.nsn
+                            ? _c("td", [
+                                _vm._v(
+                                  "\n                        " +
+                                    _vm._s(
+                                      _vm.address_by_nsn[index].store_address
+                                    ) +
+                                    "\n                        " +
+                                    _vm._s(
+                                      _vm.address_by_nsn[index].store_city
+                                    ) +
+                                    "\n                        " +
+                                    _vm._s(
+                                      _vm.address_by_nsn[index].store_state
+                                    ) +
+                                    "\n                        " +
+                                    _vm._s(
+                                      _vm.address_by_nsn[index].store_zip
+                                    ) +
+                                    "\n                    "
+                                )
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(order.presell) +
+                                "\n\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(order.order_board) +
+                                "\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(order.protective_cover) +
+                                "\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(order.height_requirement) +
+                                "\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              "\n                        " +
                                 _vm._s(
-                                  _vm.address_by_nsn[index].store_address
+                                  order.requested_enclosure_delivery_date
                                 ) +
-                                "\n                    " +
-                                _vm._s(_vm.address_by_nsn[index].store_city) +
-                                "\n                    " +
-                                _vm._s(_vm.address_by_nsn[index].store_state) +
-                                "\n                    " +
-                                _vm._s(_vm.address_by_nsn[index].store_zip) +
-                                "\n                "
+                                "\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(order.delivery_note) +
+                                "\n                    "
                             )
                           ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.presell) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.order_board) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.protective_cover) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.height_requirement) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.requested_enclosure_delivery_date) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(order.delivery_note) +
-                            "\n                "
-                        )
-                      ])
-                    ])
-                  })
+                        ]),
+                        _vm._v(" "),
+                        order.errors
+                          ? _c("tr", [
+                              _c(
+                                "td",
+                                { attrs: { align: "center", colspan: "9" } },
+                                _vm._l(order.errors, function(error) {
+                                  return _c("span", [
+                                    _vm._v("333" + _vm._s(error))
+                                  ])
+                                })
+                              )
+                            ])
+                          : _vm._e()
+                      ]
+                    })
+                  ],
+                  2
                 )
               ]
             )
