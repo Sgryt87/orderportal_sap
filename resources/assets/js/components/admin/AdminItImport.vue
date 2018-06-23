@@ -106,21 +106,21 @@
             }
         },
         methods: {
-            navigate_to_the_page: function (page) {
+            navigate_to_the_page(page) {
                 this.page = Number(page);
                 this.fetch_data();
             },
-            navigate_to_the_next: function () {
+            navigate_to_the_next() {
                 if (this.current_page < this.total_pages) {
-                    this.navigate_to_the_page(this.current_page + 1)
+                    this.navigate_to_the_page(Number(this.current_page) + 1)
                 }
             },
-            navigate_to_the_prev: function () {
+            navigate_to_the_prev() {
                 if (this.current_page > 1) {
                     this.navigate_to_the_page(this.current_page - 1)
                 }
             },
-            fetch_data: function () {
+            fetch_data() {
                 axios.get(`api/it-imports?page=${this.page}&per_page=${this.per_page}`)
                     .then(response => {
                         console.log(response);

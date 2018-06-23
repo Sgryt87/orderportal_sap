@@ -24,15 +24,28 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $page     = $request->query('page');
+        $per_page = $request->query('per_page');
+
+        $total_rows = Order::count();
+        $skip       = ($page - 1) * $per_page;
+        $take       = $per_page;
+
+        $orders = Order::with([
+            'presell',
+            'protective_cover',
+            'order_board',
+            'height_requirement'
+        ])->skip($skip)->take($take)->get();
+
         return response([
-            'data' => new OrderCollection(Order::with([
-                'presell',
-                'protective_cover',
-                'order_board',
-                'height_requirement'
-            ])->get())
+            'data'        => $orders,
+            'total_rows'  => $total_rows,
+            'total_pages' => round($total_rows / $per_page),
+            'per_page'    => $per_page,
+            'page'        => $page
         ], Response::HTTP_OK);
     }
 
@@ -265,6 +278,7 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
+
 //        $order->delete();
 
         return response([

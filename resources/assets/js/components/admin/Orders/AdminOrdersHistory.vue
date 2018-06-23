@@ -7,6 +7,18 @@
             </li>
             <li class="breadcrumb-item active">History</li>
         </ol>
+        <div v-if="orders && total_rows > 20">
+            <label>Show pages:</label>
+            <select v-model="per_page" @change="change_per_page">
+                <option v-if="total_rows > 20">20</option>
+                <option v-if="total_rows > 50">50</option>
+                <option v-if="total_rows > 100">100</option>
+                <option v-if="total_rows > 250">250</option>
+                <option v-if="total_rows > 500">500</option>
+                <option v-if="total_rows > 1000">1000</option>
+                <option v-if="total_rows > 10000">10000</option>
+            </select>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -137,13 +149,32 @@
                 </tbody>
             </table>
         </div>
+        <nav aria-label="Page navigation example" v-if="total_pages > 1">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" aria-label="Previous" @click="navigate_to_the_prev()">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                <li v-bind:class="[page_index == page ? 'active' : '']" class="page-item" v-for="page_index in
+                paginate()">
+                    <a class="page-link" @click="navigate_to_the_page(page_index)">{{page_index}}</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" aria-label="Next" @click="navigate_to_the_next()">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
     import DisabledDays from './../../../disabledDays';
-    import Pagination from './../../services/Pagination';
+    import PaginateService from '../../services/Pagination';
 
     export default {
         components: {},
@@ -158,11 +189,13 @@
                 height_requirements: [],
                 errors: [],
                 editId: null,
+
+                page: 1,
+                per_page: 2,
+                total_rows: 0,
+                total_pages: 0,
+
                 loading: false,
-
-                current_page: null,
-                total_pages: null,
-
                 disabled_days: null,
 
                 formats: {
@@ -239,17 +272,18 @@
                         console.log(error.response);
                     })
             },
-            fetch_orders_data(page) {
-                axios.get(`api/orders`)
+            fetch_orders_data() {
+                axios.get(`api/orders?page=${this.page}&per_page=${this.per_page}`)
                     .then(response => {
                         this.orders = response.data.data;
                         for (let i = 0; i < this.orders.length; i++) {
                             this.orders[i].requested_enclosure_delivery_date = new
                             Date(this.orders[i].requested_enclosure_delivery_date);
                         }
-                        // console.log(this.orders);
-                        // this.current_page = response.data.current_page;
-                        // this.total_pages = response.data.last_page;
+                        this.it_imports = response.data.data;
+                        this.current_page = response.data.page;
+                        this.total_pages = response.data.total_pages;
+                        this.total_rows = response.data.total_rows;
                     })
                     .catch((error) => {
                         this.errors.push(error.response);
@@ -272,7 +306,7 @@
                     })
             },
             delete_order(order, index) {
-                this.$awn.confirm("Delete?",this.onOk(order),this.onCancel());
+                this.$awn.confirm("Delete?", this.onOk(order), this.onCancel());
                 // if (confirm('Delete?')) {
                 //     axios.delete(`api/orders/${order.id}`)
                 //         .then(response => {
@@ -286,7 +320,7 @@
                 //         })
                 // }
             },
-            onOk(order){
+            onOk(order) {
                 console.log('del');
                 axios.delete(`api/orders/${order.id}`)
                     .then(response => {
@@ -300,7 +334,7 @@
                         console.log(error.response);
                     })
             },
-            onCancel(){
+            onCancel() {
                 this.editId = null;
             },
             //EDITING IN LINE
@@ -324,8 +358,27 @@
             date_to_string(date) {
                 return date.toISOString().slice(0, 10);
             },
-
-
+            paginate() {
+                return PaginateService.pagination(this.page, this.total_pages);
+            },
+            change_per_page() {
+                this.page = 1;
+                this.fetch_orders_data();
+            },
+            navigate_to_the_page(page) {
+                this.page = Number(page);
+                this.fetch_orders_data();
+            },
+            navigate_to_the_next() {
+                if (this.current_page < this.total_pages) {
+                    this.navigate_to_the_page(Number(this.current_page) + 1);
+                }
+            },
+            navigate_to_the_prev() {
+                if (this.current_page > 1) {
+                    this.navigate_to_the_page(this.current_page - 1)
+                }
+            }
         }
     }
 </script>
