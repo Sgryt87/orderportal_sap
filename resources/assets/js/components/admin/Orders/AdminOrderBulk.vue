@@ -9,12 +9,6 @@
         </ol>
         <button @click="warning()" class="btn btn-outline-info mb-3">Download Template</button>
         <button @click="storeCSV()" class="btn btn-outline-success mb-3">Submit Your CSV</button>
-        <div v-if="orders && orders.length">
-            <div v-for="(error,index) in orders" class="alert alert-danger" role="alert">
-                {{orders[index].errors}}
-            </div>
-
-        </div>
         <div class="table-responsive">
             <vue-dropzone @vdropzone-file-added="uploadCSV" :options="dropzoneOptions" id="dropzone"></vue-dropzone>
             <table v-if="orders && orders.length" class="table table-bordered" id="dataTable" width="100%"
@@ -125,8 +119,7 @@
             //Paparse
             uploadCSV(e) {
                 //otherwise JS doesnt read a function ...
-                let that = this;
-                const fileToLoad = event.target.files[0]; // what is that for??
+                let that = this;// what is that for??
                 const reader = new FileReader();
                 reader.onload = fileLoadedEvent => {
                     Papa.parse(fileLoadedEvent.target.result, {
@@ -165,10 +158,10 @@
                         },
                     })
                 };
-                console.log("READER", reader.readAsText(fileToLoad));  // what is that for??
+                reader.readAsText(event.target.files[0]);
             },
             storeCSV() {
-                axios.post(`api/orders-bulk-store`, {data: this.orders})
+                axios.post(`api/orders-bulk-store`, this.orders)
                     .then(response => {
                         this.orders = response.data.data;
                         // for (let i = 0; i < response.data.length; i++) {
@@ -177,7 +170,7 @@
                         console.log('ORDERS STORED !!!', this.orders);
                     })
                     .catch((error) => {
-                        this.errors.push(error.response.data.errors);
+                        this.errors.push(error.response);
                         console.log(error.response);
                     })
             },
@@ -188,11 +181,11 @@
                         console.log('address_by_nsn', response.data.data);
                     })
                     .catch((error) => {
-                        this.errors.push(error.response.data.errors);
+                        this.errors.push(error.response);
                         console.log(error.response);
                     })
             },
-            warning(){
+            warning() {
                 this.$awn.confirm("Deleted!");
             }
 

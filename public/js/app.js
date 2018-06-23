@@ -54165,7 +54165,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -54186,12 +54186,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue2_dropzone_dist_vue2Dropzone_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_vue2_dropzone_dist_vue2Dropzone_min_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation__ = __webpack_require__(66);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__BulkUploadValidation__);
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -54313,8 +54307,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         //Paparse
         uploadCSV: function uploadCSV(e) {
             //otherwise JS doesnt read a function ...
-            var that = this;
-            var fileToLoad = event.target.files[0]; // what is that for??
+            var that = this; // what is that for??
             var reader = new FileReader();
             reader.onload = function (fileLoadedEvent) {
                 __WEBPACK_IMPORTED_MODULE_1_papaparse___default.a.parse(fileLoadedEvent.target.result, {
@@ -54355,19 +54348,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     }
                 });
             };
-            console.log("READER", reader.readAsText(fileToLoad)); // what is that for??
+            reader.readAsText(event.target.files[0]);
         },
         storeCSV: function storeCSV() {
             var _this2 = this;
 
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-bulk-store', { data: this.orders }).then(function (response) {
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-bulk-store', this.orders).then(function (response) {
                 _this2.orders = response.data.data;
                 // for (let i = 0; i < response.data.length; i++) {
                 //     this.orders.push(response.data[i]);
                 // }
                 console.log('ORDERS STORED !!!', _this2.orders);
             }).catch(function (error) {
-                _this2.errors.push(error.response.data.errors);
+                _this2.errors.push(error.response);
                 console.log(error.response);
             });
         },
@@ -54378,7 +54371,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this3.address_by_nsn = response.data.data;
                 console.log('address_by_nsn', response.data.data);
             }).catch(function (error) {
-                _this3.errors.push(error.response.data.errors);
+                _this3.errors.push(error.response);
                 console.log(error.response);
             });
         },
@@ -56371,25 +56364,6 @@ var render = function() {
       },
       [_vm._v("Submit Your CSV")]
     ),
-    _vm._v(" "),
-    _vm.orders && _vm.orders.length
-      ? _c(
-          "div",
-          _vm._l(_vm.orders, function(error, index) {
-            return _c(
-              "div",
-              { staticClass: "alert alert-danger", attrs: { role: "alert" } },
-              [
-                _vm._v(
-                  "\n            " +
-                    _vm._s(_vm.orders[index].errors) +
-                    "\n        "
-                )
-              ]
-            )
-          })
-        )
-      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
