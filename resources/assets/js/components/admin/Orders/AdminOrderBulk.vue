@@ -59,9 +59,9 @@
                             {{order.delivery_note}}
                         </td>
                     </tr>
-                    <tr v-if="order.errors" >
-                        <td align="center" colspan="9" >
-                            <span v-for="error in order.errors " >333{{error}}</span>
+                    <tr v-if="order.errors">
+                        <td align="center" colspan="9">
+                            <span v-for="error in order.errors">{{error}}</span>
                         </td>
                     </tr>
                 </template>
@@ -174,7 +174,7 @@
                 axios.post(`api/orders-bulk-store`, this.orders)
                     .then(response => {
                         this.orders = response.data.data;
-                        this.$awn.alert("You order has been sotored!");
+                        this.$awn.success("You order has been stored!");
                         console.log('ORDERS STORED !!!', this.orders);
                     })
                     .catch((error) => {

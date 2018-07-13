@@ -7,6 +7,7 @@
             </li>
             <li class="breadcrumb-item active">It Import</li>
         </ol>
+
         <div v-if="it_imports">
             <label>Show pages:</label>
             <select v-model="per_page" @change="change_per_page">
@@ -137,7 +138,7 @@
             paginate() {
                 return PaginateService.pagination(this.page, this.total_pages);
             },
-            change_per_page(){
+            change_per_page() {
                 this.page = 1;
                 this.fetch_data();
             }

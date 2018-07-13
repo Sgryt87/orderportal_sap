@@ -77,7 +77,7 @@
                 <textarea class="form-control" id="" v-model="order.delivery_note" rows="3"
                           maxlength="255"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Submit Order</button>
+            <button type="submit" class="btn btn-outline-success mb-3">Submit Order</button>
         </form>
     </div>
 </template>
@@ -100,11 +100,12 @@
                 protective_covers: [],
                 height_requirements: [],
                 notifications: [],
+                errors: [],
+                asyncResult: false,
 
-                labels: {
-                    tip: "Your custom tip box label"
-                },
-
+                // labels: {
+                //     tip: "Your custom tip box label"
+                // },
 
                 disabled_days: null,
 
@@ -186,17 +187,19 @@
                     });
             },
             create_order() {
+                // this.$awn.async(this.asyncResult);
                 axios.post(`api/orders`, this.order)
                 // todo READ STATUS CODE
                     .then(response => {
+                        this.asyncResult = true;
                         this.notifications.push('Submitted');
                         console.log(response, 'submitted');
                         this.$awn.success("Order Created!");
-
                     })
                     .catch((error) => {
                         this.errors.push(error.response.data.errors);
-                        console.log(error.response);
+                        this.$awn.alert("Error");
+                        console.log('errrr', error.response.data.errors);
                     });
             },
             fetch_address_by_nsn(nsn) {

@@ -191,7 +191,7 @@
                 editId: null,
 
                 page: 1,
-                per_page: 2,
+                per_page: 20,
                 total_rows: 0,
                 total_pages: 0,
 

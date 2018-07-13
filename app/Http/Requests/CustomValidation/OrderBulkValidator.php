@@ -14,7 +14,6 @@ use DateTime;
 
 class OrderBulkValidator
 {
-
     public static function validate($data)
     {
         for ($i = 0; $i < count($data); $i++) {
@@ -31,9 +30,24 @@ class OrderBulkValidator
                     'Please enter a valid NSN');
             }
 
-            if ( ! Presell::where('value', $data[$i]['presell'])->first()) {
-                array_push($data[$i]['errors'],
-                    'Presells value is not valid.');
+            if (filter_var($data[$i]['presell'], FILTER_VALIDATE_INT)) {
+                if ( ! Presell::where('value', $data[$i]['presell'])->first()) {
+                    array_push($data[$i]['errors'],
+                        'Presells value is not valid.' . ' <--> ' . Presell::where('value',
+                            $data[$i]['presell'])->first());
+                }
+            } else {
+                array_push($data[$i]['errors'], 'Presells value is not valid.');
+            }
+
+            if (filter_var($data[$i]['order_board'], FILTER_VALIDATE_INT)) {
+                if ( ! OrderBoard::where('value', $data[$i]['order_board'])->first()) {
+                    array_push($data[$i]['errors'],
+                        'Order boards value is not valid.' . ' <--> ' . OrderBoard::where('value',
+                            $data[$i]['order_board'])->first());
+                }
+            } else {
+                array_push($data[$i]['errors'], 'Order boards value is not valid.');
             }
 
             if ($data[$i]['presell'] === 0 && $data[$i]['order_board'] === 0) {
@@ -41,21 +55,21 @@ class OrderBulkValidator
                     'Please select at least 1 Single Menu Board or 1 Double Menu Board.');
             }
 
-            if ( ! ProtectiveCover::where('value', $data[$i]['protective_cover'])->first()) {
-                array_push($data[$i]['errors'],
-                    'Protective Cover value is not valid.');
-            }
-
             if ( ! OrderBoard::where('value', $data[$i]['order_board'])->first()) {
                 array_push($data[$i]['errors'],
                     'Order Board value is not valid.');
+            }
+
+            if ( ! ProtectiveCover::where('value', $data[$i]['protective_cover'])->first()) {
+                array_push($data[$i]['errors'],
+                    'Protective Cover value is not valid.' . ' ->' . ProtectiveCover::where('value',
+                        $data[$i]['protective_cover'])->first());
             }
 
             if ( ! HeightRequirement::where('value', $data[$i]['height_requirement'])->first()) {
                 array_push($data[$i]['errors'],
                     'Height Requirements value is not valid.');
             }
-
 
             if (strlen($data[$i]['delivery_note']) > 255) {
                 array_push($data[$i]['errors'],
@@ -79,7 +93,7 @@ class OrderBulkValidator
     {
         $errors = [];
 
-        if($date === FALSE){
+        if ($date === false) {
             array_push($errors, "Delivery date has to be mm/dd/yyyy format");
 
             return $errors;
@@ -115,7 +129,6 @@ class OrderBulkValidator
             array_push($errors, "An order has previously been submitted for 
 this NSN. Please enter a new NSN or work with your Coates representative to update the order.");
         }
-
 
 
         return $errors;

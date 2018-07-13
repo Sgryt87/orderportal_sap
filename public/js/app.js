@@ -53566,10 +53566,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             protective_covers: [],
             height_requirements: [],
             notifications: [],
+            errors: [],
+            asyncResult: false,
 
-            labels: {
-                tip: "Your custom tip box label"
-            },
+            // labels: {
+            //     tip: "Your custom tip box label"
+            // },
 
             disabled_days: null,
 
@@ -53654,15 +53656,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         create_order: function create_order() {
             var _this5 = this;
 
+            // this.$awn.async(this.asyncResult);
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders', this.order)
             // todo READ STATUS CODE
             .then(function (response) {
+                _this5.asyncResult = true;
                 _this5.notifications.push('Submitted');
                 console.log(response, 'submitted');
                 _this5.$awn.success("Order Created!");
             }).catch(function (error) {
                 _this5.errors.push(error.response.data.errors);
-                console.log(error.response);
+                _this5.$awn.alert("Error");
+                console.log('errrr', error.response.data.errors);
             });
         },
         fetch_address_by_nsn: function fetch_address_by_nsn(nsn) {
@@ -54049,7 +54054,10 @@ var render = function() {
         _vm._v(" "),
         _c(
           "button",
-          { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+          {
+            staticClass: "btn btn-outline-success mb-3",
+            attrs: { type: "submit" }
+          },
           [_vm._v("Submit Order")]
         )
       ]
@@ -54365,7 +54373,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('api/orders-bulk-store', this.orders).then(function (response) {
                 _this.orders = response.data.data;
-                _this.$awn.alert("You order has been sotored!");
+                _this.$awn.success("You order has been stored!");
                 console.log('ORDERS STORED !!!', _this.orders);
             }).catch(function (error) {
                 _this.errors.push(error.response);
@@ -56483,9 +56491,7 @@ var render = function() {
                                 "td",
                                 { attrs: { align: "center", colspan: "9" } },
                                 _vm._l(order.errors, function(error) {
-                                  return _c("span", [
-                                    _vm._v("333" + _vm._s(error))
-                                  ])
+                                  return _c("span", [_vm._v(_vm._s(error))])
                                 })
                               )
                             ])
@@ -56847,7 +56853,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             editId: null,
 
             page: 1,
-            per_page: 2,
+            per_page: 20,
             total_rows: 0,
             total_pages: 0,
 
@@ -57838,7 +57844,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -57853,6 +57859,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_Pagination__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_Pagination___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__services_Pagination__);
+//
 //
 //
 //

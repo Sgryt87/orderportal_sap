@@ -32,7 +32,7 @@ class OrderRequest extends FormRequest
             'delivery_note'                     => 'nullable|string|max:255',
             'note'                              => 'nullable|string|max:255',
             'requested_enclosure_delivery_date' => 'required|date',
-            'ship_date'                         => 'nullable|date',   //todo FIX date format
+            'ship_date'                         => 'nullable|date',
         ];
     }
 }
