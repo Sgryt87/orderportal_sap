@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                 <template v-for="(order, index) in orders">
-                    <tr>
+                    <tr v-bind:class="{ 'text-danger': order.errors.length }">
                         <td>{{index + 1}}</td>
                         <td>
                             {{order.nsn}}
@@ -59,9 +59,9 @@
                             {{order.delivery_note}}
                         </td>
                     </tr>
-                    <tr v-if="order.errors">
+                    <tr v-if="order.errors && order.errors.length">
                         <td align="center" colspan="9">
-                            <span v-for="error in order.errors">{{error}}</span>
+                            <span v-for="error in order.errors" v-if="error && error.length">{{error}}</span>
                         </td>
                     </tr>
                 </template>
@@ -202,7 +202,6 @@
                 this.address_by_nsn = [];
                 this.errors = [];
             }
-
         },
     }
 

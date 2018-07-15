@@ -27,58 +27,55 @@ class OrderBulkValidator
                 }
             } else {
                 array_push($data[$i]['errors'],
-                    'Please enter a valid NSN');
+                    'Please enter a valid NSN. ');
             }
 
             if (filter_var($data[$i]['presell'], FILTER_VALIDATE_INT)) {
                 if ( ! Presell::where('value', $data[$i]['presell'])->first()) {
                     array_push($data[$i]['errors'],
-                        'Presells value is not valid.' . ' <--> ' . Presell::where('value',
-                            $data[$i]['presell'])->first());
+                        'Presells value is not valid. ');
                 }
             } else {
-                array_push($data[$i]['errors'], 'Presells value is not valid.');
+                array_push($data[$i]['errors'], 'Presells value is not valid. ');
             }
 
             if (filter_var($data[$i]['order_board'], FILTER_VALIDATE_INT)) {
                 if ( ! OrderBoard::where('value', $data[$i]['order_board'])->first()) {
                     array_push($data[$i]['errors'],
-                        'Order boards value is not valid.' . ' <--> ' . OrderBoard::where('value',
-                            $data[$i]['order_board'])->first());
+                        'Order boards value is not valid. ');
                 }
             } else {
-                array_push($data[$i]['errors'], 'Order boards value is not valid.');
+                array_push($data[$i]['errors'], 'Order boards value is not valid. ');
             }
 
             if ($data[$i]['presell'] === 0 && $data[$i]['order_board'] === 0) {
                 array_push($data[$i]['errors'],
-                    'Please select at least 1 Single Menu Board or 1 Double Menu Board.');
+                    'Please select at least 1 Single Menu Board or 1 Double Menu Board. ');
             }
 
             if ( ! OrderBoard::where('value', $data[$i]['order_board'])->first()) {
                 array_push($data[$i]['errors'],
-                    'Order Board value is not valid.');
+                    'Order Board value is not valid. ');
             }
 
             if ( ! ProtectiveCover::where('value', $data[$i]['protective_cover'])->first()) {
                 array_push($data[$i]['errors'],
-                    'Protective Cover value is not valid.' . ' ->' . ProtectiveCover::where('value',
-                        $data[$i]['protective_cover'])->first());
+                    'Protective Cover value is not valid. ');
             }
 
             if ( ! HeightRequirement::where('value', $data[$i]['height_requirement'])->first()) {
                 array_push($data[$i]['errors'],
-                    'Height Requirements value is not valid.');
+                    'Height Requirements value is not valid. ');
             }
 
             if (strlen($data[$i]['delivery_note']) > 255) {
                 array_push($data[$i]['errors'],
-                    'Delivery Notes field exceeds 255 characters.');
+                    'Delivery Notes field exceeds 255 characters. ');
             }
 
             if (strlen($data[$i]['note']) > 255) {
                 array_push($data[$i]['errors'],
-                    'Notes field exceeds 255 characters.');
+                    'Notes field exceeds 255 characters. ');
             }
 
             $data[$i]['errors'] = array_merge($data[$i]['errors'],

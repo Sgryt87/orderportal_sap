@@ -54173,7 +54173,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -56399,99 +56399,105 @@ var render = function() {
                   [
                     _vm._l(_vm.orders, function(order, index) {
                       return [
-                        _c("tr", [
-                          _c("td", [_vm._v(_vm._s(index + 1))]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(order.nsn) +
-                                "\n                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          order.nsn
-                            ? _c("td", [
-                                _vm._v(
-                                  "\n                        " +
-                                    _vm._s(
-                                      _vm.address_by_nsn[index].store_address
-                                    ) +
+                        _c(
+                          "tr",
+                          { class: { "text-danger": order.errors.length } },
+                          [
+                            _c("td", [_vm._v(_vm._s(index + 1))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(order.nsn) +
+                                  "\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            order.nsn
+                              ? _c("td", [
+                                  _vm._v(
                                     "\n                        " +
-                                    _vm._s(
-                                      _vm.address_by_nsn[index].store_city
-                                    ) +
-                                    "\n                        " +
-                                    _vm._s(
-                                      _vm.address_by_nsn[index].store_state
-                                    ) +
-                                    "\n                        " +
-                                    _vm._s(
-                                      _vm.address_by_nsn[index].store_zip
-                                    ) +
-                                    "\n                    "
-                                )
-                              ])
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(order.presell) +
-                                "\n\n                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(order.order_board) +
-                                "\n                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(order.protective_cover) +
-                                "\n                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(order.height_requirement) +
-                                "\n                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(
-                                  order.requested_enclosure_delivery_date
-                                ) +
-                                "\n                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(order.delivery_note) +
-                                "\n                    "
-                            )
-                          ])
-                        ]),
+                                      _vm._s(
+                                        _vm.address_by_nsn[index].store_address
+                                      ) +
+                                      "\n                        " +
+                                      _vm._s(
+                                        _vm.address_by_nsn[index].store_city
+                                      ) +
+                                      "\n                        " +
+                                      _vm._s(
+                                        _vm.address_by_nsn[index].store_state
+                                      ) +
+                                      "\n                        " +
+                                      _vm._s(
+                                        _vm.address_by_nsn[index].store_zip
+                                      ) +
+                                      "\n                    "
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(order.presell) +
+                                  "\n\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(order.order_board) +
+                                  "\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(order.protective_cover) +
+                                  "\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(order.height_requirement) +
+                                  "\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(
+                                    order.requested_enclosure_delivery_date
+                                  ) +
+                                  "\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(order.delivery_note) +
+                                  "\n                    "
+                              )
+                            ])
+                          ]
+                        ),
                         _vm._v(" "),
-                        order.errors
+                        order.errors && order.errors.length
                           ? _c("tr", [
                               _c(
                                 "td",
                                 { attrs: { align: "center", colspan: "9" } },
                                 _vm._l(order.errors, function(error) {
-                                  return _c("span", [_vm._v(_vm._s(error))])
+                                  return error && error.length
+                                    ? _c("span", [_vm._v(_vm._s(error))])
+                                    : _vm._e()
                                 })
                               )
                             ])
