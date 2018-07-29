@@ -296,13 +296,19 @@
                 //     order.requested_enclosure_delivery_date, "America/Toronto"));
                 axios.put(`api/orders/${order.id}`, order)
                     .then(response => {
+                        console.log('res', response);
                         order = response.data.data;
+                        this.editId = null;
+                        this.$awn.success("Saved!");
                         // this.current_page = response.data.current_page;
                         // this.total_pages = response.data.last_page;
                     })
                     .catch((error) => {
-                        this.errors.push(error.response);
-                        console.log(error.response);
+
+                        this.push_errors(error.response.data.errors);
+                        // console.log(this.errors);
+                        this.show_errors();
+
                     })
             },
             delete_order(order, index) {
@@ -352,12 +358,30 @@
                 //     order.requested_enclosure_delivery_date, "America/Toronto"));
                 console.log(order);
                 this.update_order(order);
-                this.editId = null;
-                this.$awn.success("Saved!");
             },
             date_to_string(date) {
                 return date.toISOString().slice(0, 10);
             },
+            push_errors(error) {
+                for (let err of Object.values(error)) {
+                    for (let i = 0; i < err.length; i++) {
+                        this.errors.push(err[i]);
+                    }
+                }
+            },
+
+            show_errors() {
+                // this.errors.forEach(function (err) {
+                //     // console.log(err);
+                //     // this.$awn.alert(err);
+                // });
+                for (let i = 0; i < this.errors.length; i++) {
+                    console.log(this.errors[i]);
+                    this.$awn.alert(this.errors[i]);
+                }
+                this.errors = [];
+            },
+            //pagination
             paginate() {
                 return PaginateService.pagination(this.page, this.total_pages);
             },
