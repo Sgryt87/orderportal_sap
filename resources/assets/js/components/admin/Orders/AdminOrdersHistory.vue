@@ -108,6 +108,7 @@
                             </v-date-picker>
                         </div>
                         <div v-else>
+                            <!--{{ date_to_string(order.requested_enclosure_delivery_date) }}-->
                             {{ date_to_string(order.requested_enclosure_delivery_date) }}
                         </div>
                     </td>
@@ -129,10 +130,19 @@
                     </td>
                     <td>
                         <div v-if="order.id === editId">
-                            <input type="text" v-model="order.ship_date">
+                            <v-date-picker
+                                    mode='single'
+                                    :formats='formats'
+                                    :disabled-dates='disabled_days'
+                                    :disabled-attribute='disabledAttribute'
+                                    :min-date='new Date()'
+                                    :max-date='new Date(new Date().setFullYear(new Date().getFullYear() + 1))'
+                                    v-model='order.ship_date'
+                                    show-caps>
+                            </v-date-picker>
                         </div>
                         <div v-else>
-                            {{order.ship_date}}
+                            {{ date_to_string(order.ship_date) }}
                         </div>
                     </td>
                     <td>
@@ -175,6 +185,7 @@
     import axios from 'axios';
     import DisabledDays from './../../../disabledDays';
     import PaginateService from '../../services/Pagination';
+    import moment from 'moment';
 
     export default {
         components: {},
@@ -198,6 +209,7 @@
                 loading: false,
                 disabled_days: null,
 
+                //datepicker
                 formats: {
                     title: 'MMMM YYYY',
                     weekdays: 'WW',
@@ -277,8 +289,9 @@
                     .then(response => {
                         this.orders = response.data.data;
                         for (let i = 0; i < this.orders.length; i++) {
-                            this.orders[i].requested_enclosure_delivery_date = new
-                            Date(this.orders[i].requested_enclosure_delivery_date);
+                            this.orders[i].requested_enclosure_delivery_date =
+                                this.string_to_date(this.orders[i].requested_enclosure_delivery_date);
+                            this.orders[i].ship_date = this.string_to_date(this.orders[i].ship_date);
                         }
                         this.it_imports = response.data.data;
                         this.current_page = response.data.page;
@@ -292,8 +305,11 @@
             },
             //ORDERS
             update_order(order) {
-                // console.log('TIME', order.requested_enclosure_delivery_date = moment.tz(
-                //     order.requested_enclosure_delivery_date, "America/Toronto"));
+
+                order.requested_enclosure_delivery_date =
+                    moment(order.requested_enclosure_delivery_date).format('YYYY-MM-DD');
+                order.ship_date = moment(order.ship_date).format('YYYY-MM-DD');
+
                 axios.put(`api/orders/${order.id}`, order)
                     .then(response => {
                         console.log('res', response);
@@ -343,6 +359,7 @@
             onCancel() {
                 this.editId = null;
             },
+
             //EDITING IN LINE
             edit_order(order) {
                 this.tempOrder = Object.assign({}, order);
@@ -359,9 +376,17 @@
                 console.log(order);
                 this.update_order(order);
             },
+
+            //date conversion
             date_to_string(date) {
-                return date.toISOString().slice(0, 10);
+                return moment(date).format('MM-DD-YYYY');
             },
+            string_to_date(date) {
+                // return moment(date).format('YYYY-MM-DD');
+                return moment(date, 'YYYY-MM-DD').toDate();
+            },
+
+            //
             push_errors(error) {
                 for (let err of Object.values(error)) {
                     for (let i = 0; i < err.length; i++) {
@@ -369,12 +394,8 @@
                     }
                 }
             },
-
+            //errors
             show_errors() {
-                // this.errors.forEach(function (err) {
-                //     // console.log(err);
-                //     // this.$awn.alert(err);
-                // });
                 for (let i = 0; i < this.errors.length; i++) {
                     console.log(this.errors[i]);
                     this.$awn.alert(this.errors[i]);

@@ -24,7 +24,8 @@
     "blob": "^0.0.4",
     "vue2-dropzone": "^3.2.2",
     "v-calendar": "^0.9.7",
-    "vue-awesome-notifications": "^2.2.9"
+    "vue-awesome-notifications": "^2.2.9",
+    "moment": "^2.22.2"
   },
   "dependencies": {}
 }

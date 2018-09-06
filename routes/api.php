@@ -24,6 +24,8 @@ Route::post('orders-bulk-store', 'OrderController@storeBulk');
 
 Route::post('address-by-nsn-single', 'ItImportController@getAddressByNSN');
 
+Route::post('order-validate-single', 'OrderController@validateSingle');
+
 Route::post('address-by-nsn-bulk', 'ItImportController@getAddressesByNSN');
 
 Route::post('orders-validate-bulk', 'OrderController@validateBulk');

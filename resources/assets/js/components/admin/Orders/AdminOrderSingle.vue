@@ -12,11 +12,11 @@
                 <strong>{{item}}</strong>
             </div>
         </div>
-        <form v-on:submit.prevent="create_order">
+        <form v-on:submit.prevent="create_order(order)">
             <div class="form-group">
                 <label for="nsn">NSN</label>
                 <input type="text" class="form-control" v-model="order.nsn" id="nsn" placeholder=""
-                       @blur="fetch_address_by_nsn(order.nsn)">
+                       @blur="validate_nsn(order.nsn)">
             </div>
             <div v-if="address_by_nsn" class="form-group">
                 <label for="address">Store Address</label>
@@ -88,6 +88,7 @@
 
     import axios from 'axios';
     import DisabledDays from './../../../disabledDays';
+    import moment from 'moment';
 
     export default {
         components: {},
@@ -186,9 +187,14 @@
                         console.log(error.response);
                     });
             },
-            create_order() {
+            create_order(order) {
+                console.log('1',order);
                 // this.$awn.async(this.asyncResult);
-                axios.post(`api/orders`, this.order)
+                order.requested_enclosure_delivery_date_ =
+                    moment(order.requested_enclosure_delivery_date).format('YYYY-MM-DD');
+                console.log('2',order);
+                return;
+                axios.post(`api/orders`, order)
                 // todo READ STATUS CODE
                     .then(response => {
                         this.asyncResult = true;
@@ -202,18 +208,27 @@
                         console.log('errrr', error.response.data.errors);
                     });
             },
+            validate_nsn(nsn) {
+                axios.post(`api/order-validate-single`, {'nsn': nsn})
+                    .then(response => {
+                        this.fetch_address_by_nsn(nsn)
+                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response.data.data.errors);
+                        this.$awn.alert(`${error.response.data.data.errors}`);
+                    })
+            },
             fetch_address_by_nsn(nsn) {
-                if (nsn > 0) {
-                    axios.post(`api/address-by-nsn-single`, {'nsn': nsn})
-                        .then(response => {
-                            console.log('address', response.data.data);
-                            this.address_by_nsn = response.data.data;
-                        })
-                        .catch((error) => {
-                            this.errors.push(error.response.data.errors);
-                            console.log(error.response);
-                        })
-                }
+                axios.post(`api/address-by-nsn-single`, {'nsn': nsn})
+                    .then(response => {
+                        console.log('address', response.data.data);
+                        this.address_by_nsn = response.data.data;
+                    })
+                    .catch((error) => {
+                        this.errors.push(error.response.data.errors);
+                        console.log(error.response);
+                    })
             }
         }
     }

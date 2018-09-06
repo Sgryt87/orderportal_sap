@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('nsn')->unique();
             $table->foreign('nsn')->references('nsn')->on('it_imports');
-            $table->unsignedInteger('presells_id');
+            $table->unsignedInteger('presell_id');
             $table->foreign('presell_id')->references('id')->on('presells');
             $table->unsignedInteger('order_board_id');
             $table->foreign('order_board_id')->references('id')->on('order_boards');
@@ -26,7 +26,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('height_requirement_id');
             $table->foreign('height_requirement_id')->references('id')->on('height_requirements');
             $table->string('delivery_note')->nullable();
-            $table->string('notes')->nullable();
+            $table->string('note')->nullable();
             $table->date('requested_enclosure_delivery_date');
             $table->date('ship_date')->nullable();
             $table->timestamps();

@@ -20,6 +20,9 @@ use App\Http\Utils\DateConvertor;
 use App\Http\Requests\CustomValidation\OrderBulkValidator;
 use DateTime;
 
+use App\Http\Requests\CustomValidation\OrderSingleValidator;
+
+
 class OrderController extends Controller
 {
     /**
@@ -57,9 +60,9 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function validateSingle(Request $request)
     {
-        //
+        return OrderSingleValidator::validate($request->all());
     }
 
     /**
@@ -81,9 +84,9 @@ class OrderController extends Controller
         $order->height_requirement_id             = $request->input('height_requirement.id');
         $order->delivery_note                     = $request->input('delivery_note');
         $order->note                              = $request->input('note');
-        $order->requested_enclosure_delivery_date = DateConvertor::toDate($request->input('requested_enclosure_delivery_date'));
+        $order->requested_enclosure_delivery_date = $request->input('requested_enclosure_delivery_date');
         $order->ship_date                         = $request->input('ship_date');
-        $order->save();
+
 
         return response([
             'data' => new OrderResource($order)
@@ -114,15 +117,17 @@ class OrderController extends Controller
             $height_requirement = HeightRequirement::where('value', $data[$i]['height_requirement'])->first();
 
 
-            $order['nsn']                               = $data[$i]['nsn'];
-            $order['presell_id']                        = $presell->id;
-            $order['order_board_id']                    = $order_board->id;
-            $order['protective_cover_id']               = $protective_cover->id;
-            $order['height_requirement_id']             = $height_requirement->id;
-            $order['delivery_note']                     = $data[$i]['delivery_note'];
-            $order['note']                              = $data[$i]['note'];
-            $order['requested_enclosure_delivery_date'] = DateTime::createFromFormat('m/d/Y',
-                $data[$i]['requested_enclosure_delivery_date'])->format('Y-m-d');
+            $order['nsn']                   = $data[$i]['nsn'];
+            $order['presell_id']            = $presell->id;
+            $order['order_board_id']        = $order_board->id;
+            $order['protective_cover_id']   = $protective_cover->id;
+            $order['height_requirement_id'] = $height_requirement->id;
+            $order['delivery_note']         = $data[$i]['delivery_note'];
+            $order['note']                  = $data[$i]['note'];
+//            $order['requested_enclosure_delivery_date'] = DateTime::createFromFormat('m/d/Y',
+//                $data[$i]['requested_enclosure_delivery_date'])->format('Y-m-d');
+
+            $order['requested_enclosure_delivery_date'] = DateConvertor::toDate($data[$i]['requested_enclosure_delivery_date']);
 
             array_push($arrOrder, $order);
 //            array_push($arrOrderResource, new OrderResource($order));
@@ -202,13 +207,15 @@ class OrderController extends Controller
         $order->height_requirement_id             = $request->input('height_requirement.id');
         $order->delivery_note                     = $request->input('delivery_note');
         $order->note                              = $request->input('note');
-        $order->requested_enclosure_delivery_date = DateConvertor::toDate($request->input('requested_enclosure_delivery_date'));
+        $order->requested_enclosure_delivery_date = $request->input('requested_enclosure_delivery_date');
         $order->ship_date                         = $request->input('ship_date');
+//        return $order;
         $order->save();
+
 
         return response([
             'data' => new OrderResource($order)
-        ], Response::HTTP_CREATED);
+        ], Response::HTTP_OK);
     }
 
     //VALIDATE

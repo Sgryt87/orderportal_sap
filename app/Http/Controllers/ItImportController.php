@@ -79,7 +79,6 @@ class ItImportController extends Controller
 
     public function getAddressByNSN(Request $request)
     {
-
         $address_by_nsn = ItImport::where('nsn', $request->input('nsn'))->first();
 
         return response([

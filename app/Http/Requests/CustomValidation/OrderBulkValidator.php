@@ -20,14 +20,16 @@ class OrderBulkValidator
 
             $data[$i]['errors'] = [];
 
-            if (ItImport::where('nsn', $data[$i]['nsn'])->first() != null) {
-                if (Order::where('nsn', $data[$i]['nsn'])->first()) {
-                    array_push($data[$i]['errors'],
-                        'An order has previously been submitted for this NSN. Please enter a new NSN or work with your Coates representative to update the order.');
-                }
-            } else {
+
+            if (Order::where('nsn', $data[$i]['nsn'])->first()) {
+                array_push($data[$i]['errors'],
+                    'An order has previously been submitted for this NSN. Please enter a new NSN or work with your Coates representative to update the order.');
+            } elseif (ItImport::where('nsn', $data[$i]['nsn'])->first() == null) {
+                ('Please enter a valid NSN');
                 array_push($data[$i]['errors'],
                     'Please enter a valid NSN. ');
+            } else {
+               //return address
             }
 
             if (filter_var($data[$i]['presell'], FILTER_VALIDATE_INT)) {
@@ -53,10 +55,10 @@ class OrderBulkValidator
                     'Please select at least 1 Single Menu Board or 1 Double Menu Board. ');
             }
 
-            if ( ! OrderBoard::where('value', $data[$i]['order_board'])->first()) {
-                array_push($data[$i]['errors'],
-                    'Order Board value is not valid. ');
-            }
+//            if ( ! OrderBoard::where('value', $data[$i]['order_board'])->first()) {
+//                array_push($data[$i]['errors'],
+//                    'Order Board value is not valid. ');
+//            }
 
             if ( ! ProtectiveCover::where('value', $data[$i]['protective_cover'])->first()) {
                 array_push($data[$i]['errors'],
@@ -122,7 +124,7 @@ class OrderBulkValidator
             array_push($errors, "Delivery date must be Monday through Friday.");
         }
 
-        if (Order::where('requested_enclosure_delivery_date', $date)->count() > 36) {
+        if (Order::where('requested_enclosure_delivery_date', $date->format('m/d/Y'))->count() > 36) {
             array_push($errors, "An order has previously been submitted for 
 this NSN. Please enter a new NSN or work with your Coates representative to update the order.");
         }

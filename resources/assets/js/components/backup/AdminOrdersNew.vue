@@ -232,16 +232,16 @@
                     })
             },
             //ORDERS
-            create_order(order, index) {
-                axios.post(`api/orders`, order)
-                    .then(response => {
-                        this.orders[index] = response.data;
-                        // this.orders.push(response.data);
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-            },
+            // create_order(order, index) {
+            //     axios.post(`api/orders`, order)
+            //         .then(response => {
+            //             this.orders[index] = response.data;
+            //             // this.orders.push(response.data);
+            //         })
+            //         .catch(e => {
+            //             this.errors.push(e)
+            //         })
+            // },
             create_orders(order) {
                 axios.post(`api/orders`, order)
                     .then(response => {
@@ -273,7 +273,7 @@
             saveElement(order, index) {
                 if (order.id === -1) {
                     console.log(order);
-                    this.create_order(order, index);
+                    // this.create_order(order, index);
                 } else {
                     // console.log('TIME', order.requested_enclosure_delivery_date = moment.tz(
                     //     order.requested_enclosure_delivery_date, "America/Toronto"));
